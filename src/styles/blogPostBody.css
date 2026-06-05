@@ -1,0 +1,157 @@
+/**
+ * Article body from CMS (contentEditable HTML).
+ * Scoped under .blog-post-body so global styles are predictable.
+ */
+.blog-post-body {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: rgb(51 65 85);
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  overflow-x: auto;
+}
+
+.blog-post-body > *:first-child {
+  margin-top: 0 !important;
+}
+
+.blog-post-body :where(p) {
+  margin: 0 0 1.25rem;
+}
+
+.blog-post-body :where(p:last-child) {
+  margin-bottom: 0;
+}
+
+.blog-post-body :where(h1, h2, h3, h4, h5, h6) {
+  color: rgb(15 23 42);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 1.75rem 0 0.65rem;
+}
+
+.blog-post-body :where(h1) {
+  font-size: 1.875rem;
+}
+.blog-post-body :where(h2) {
+  font-size: 1.5rem;
+}
+.blog-post-body :where(h3) {
+  font-size: 1.25rem;
+}
+.blog-post-body :where(h4) {
+  font-size: 1.1rem;
+}
+
+.blog-post-body :where(ul, ol) {
+  margin: 0.75rem 0 1.25rem;
+  padding-left: 1.5rem;
+}
+
+.blog-post-body :where(ul) {
+  list-style-type: disc;
+}
+.blog-post-body :where(ol) {
+  list-style-type: decimal;
+}
+
+.blog-post-body :where(li) {
+  margin: 0.25rem 0;
+}
+
+.blog-post-body :where(blockquote) {
+  margin: 1.25rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid rgb(245 158 11);
+  background: rgb(255 251 235);
+  color: rgb(68 64 60);
+}
+
+.blog-post-body :where(a) {
+  color: rgb(180 83 9);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.blog-post-body :where(a:hover) {
+  color: rgb(146 64 14);
+}
+
+.blog-post-body :where(img) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin: 1rem 0;
+}
+
+.blog-post-body :where(figure) {
+  margin: 1.25rem 0;
+}
+
+.blog-post-body :where(figcaption) {
+  font-size: 0.8125rem;
+  color: rgb(100 116 139);
+  margin-top: 0.5rem;
+}
+
+.blog-post-body :where(hr) {
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid rgb(226 232 240);
+}
+
+.blog-post-body :where(pre) {
+  margin: 1.25rem 0;
+  padding: 1rem 1.125rem;
+  border-radius: 0.75rem;
+  background: rgb(241 245 249);
+  color: rgb(15 23 42);
+  font-size: 0.875rem;
+  overflow-x: auto;
+  border: 1px solid rgb(226 232 240);
+}
+
+.blog-post-body :where(code) {
+  font-size: 0.9em;
+  padding: 0.15em 0.4em;
+  border-radius: 0.35rem;
+  background: rgb(241 245 249);
+  color: rgb(15 23 42);
+}
+
+.blog-post-body :where(pre code) {
+  padding: 0;
+  background: transparent;
+  font-size: inherit;
+}
+
+.blog-post-body :where(table) {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.9375rem;
+}
+
+.blog-post-body :where(th, td) {
+  border: 1px solid rgb(226 232 240);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.blog-post-body :where(th) {
+  background: rgb(248 250 252);
+  font-weight: 600;
+  color: rgb(15 23 42);
+}
+
+/* Neutralise legacy font/size tags from rich editors */
+.blog-post-body :where(font, span)[style] {
+  /* keep inline styles from CMS but ensure readability */
+  max-width: 100%;
+}
+
+.blog-post-body :where(div) {
+  max-width: 100%;
+}

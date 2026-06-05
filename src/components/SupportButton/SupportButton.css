@@ -1,0 +1,132 @@
+/* ─── Floating support — primary amber, life-ring icon ─── */
+.support-wrapper {
+  position: fixed;
+  bottom: 120px;
+  right: 28px;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0.35s;
+}
+
+.support-wrapper.is-visible {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.support-float-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row-reverse;
+  gap: 0;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  background: var(--color-primary, #023526);
+  color: #ffffff;
+  border: 1px solid var(--color-primary-dark, #011f16);
+  border-radius: 50%;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  overflow: hidden;
+  box-shadow:
+    0 4px 14px rgba(4, 78, 57, 0.25),
+    0 8px 24px rgba(4, 78, 57, 0.15);
+  transition:
+    width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.35s ease,
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease,
+    gap 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.support-float-btn:hover,
+.support-float-btn:focus-visible {
+  width: auto;
+  min-width: 56px;
+  max-width: none;
+  padding: 0 2px 0 18px;
+  gap: 4px;
+  justify-content: flex-end;
+  border-radius: 999px;
+  background: var(--color-primary-dark, #011f16);
+  color: #ffffff;
+  border-color: #033b2b;
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 22px rgba(4, 78, 57, 0.35),
+    0 14px 32px rgba(3, 59, 43, 0.15);
+  outline: none;
+}
+
+.support-float-btn:active {
+  transform: translateY(-1px) scale(0.98);
+  background: #033b2b;
+}
+
+.btn-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  color: inherit;
+}
+
+.support-float-label {
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.25s ease;
+}
+
+.support-float-btn:hover .support-float-label,
+.support-float-btn:focus-visible .support-float-label {
+  max-width: 10rem;
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .support-wrapper {
+    bottom: 22px;
+    right: 16px;
+  }
+
+  .support-float-btn {
+    width: 52px;
+    height: 52px;
+  }
+
+  .btn-icon-wrap {
+    width: 52px;
+    height: 52px;
+  }
+
+  .support-float-btn:hover,
+  .support-float-btn:focus-visible {
+    padding-left: 16px;
+  }
+}

@@ -1,0 +1,332 @@
+/*
+ * Web: 1920×220 · Mobile: 750×280 (fixed strip height via --promo-mobile-height)
+ */
+
+.promo-banner-section {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.promo-slider-wrapper.swiper {
+  width: 100%;
+  height: 100%;
+  background: #f8fafc;
+}
+
+/* Desktop: match 1920×220 banner ratio — full width, no top/bottom letterboxing */
+@media (min-width: 768px) {
+  .promo-slider-wrapper.swiper {
+    height: auto;
+    aspect-ratio: 1920 / 220;
+  }
+
+  .promo-banner-section.sidebar-open .promo-slider-wrapper.swiper {
+    height: auto;
+    aspect-ratio: 1920 / 220;
+    max-height: 160px;
+  }
+}
+
+.promo-slider-wrapper .swiper-slide {
+  height: 100%;
+}
+
+.promo-slide-link {
+  height: 100%;
+  min-height: inherit;
+}
+
+.promo-banner-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+}
+
+.promo-banner-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.promo-banner-img--web {
+  object-fit: cover;
+  object-position: center center;
+  background-color: #f8fafc;
+  display: none;
+}
+
+.promo-banner-img--mobile {
+  object-fit: cover;
+  object-position: center;
+  background-color: #0f172a;
+  display: block;
+}
+
+.promo-banner-img--mobile-html {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  object-fit: unset;
+}
+
+@media (min-width: 768px) {
+  .promo-banner-img--web {
+    display: block;
+  }
+
+  .promo-banner-img--mobile,
+  .promo-banner-img--mobile-html {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .promo-slider-wrapper.swiper {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: unset;
+  }
+
+  .promo-banner-section.sidebar-open .promo-slider-wrapper.swiper {
+    height: 100%;
+    aspect-ratio: unset;
+  }
+}
+
+/* 750×280 mobile HTML demo banners */
+.promo-banner-mobile-art {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+}
+
+.promo-banner-mobile-art__row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.promo-banner-mobile-art__icon {
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  border: 2px solid currentColor;
+  opacity: 0.35;
+}
+
+.promo-banner-mobile-art__copy {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.promo-banner-mobile-art__tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.promo-banner-mobile-art__title {
+  margin: 0;
+  font-size: clamp(1rem, 4.5vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.promo-banner-mobile-art__subtitle {
+  margin: 2px 0 0;
+  font-size: clamp(0.72rem, 3vw, 0.85rem);
+  font-weight: 600;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.promo-banner-mobile-art__meta {
+  margin: 2px 0 0;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.15;
+  opacity: 0.85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.promo-banner-mobile-art__price {
+  flex: 0 0 auto;
+  max-width: 38%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.promo-banner-mobile-art__price-main {
+  font-size: clamp(0.8rem, 3.5vw, 1rem);
+  font-weight: 800;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.promo-banner-mobile-art__price-sub {
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.promo-banner-mobile-art--listing {
+  background: linear-gradient(90deg, #0f172a 0%, #023526 100%);
+  color: #f8fafc;
+}
+
+.promo-banner-mobile-art--listing .promo-banner-mobile-art__icon {
+  border-color: #c5a880;
+  background: rgba(248, 250, 252, 0.08);
+}
+
+.promo-banner-mobile-art--listing .promo-banner-mobile-art__tag {
+  background: #c5a880;
+  color: #0f172a;
+}
+
+.promo-banner-mobile-art--listing .promo-banner-mobile-art__subtitle {
+  color: #fcd34d;
+}
+
+.promo-banner-mobile-art--listing .promo-banner-mobile-art__meta {
+  color: #94a3b8;
+}
+
+.promo-banner-mobile-art--listing .promo-banner-mobile-art__price {
+  background: rgba(255, 255, 255, 0.96);
+  color: #0f172a;
+}
+
+.promo-banner-mobile-art--listing .promo-banner-mobile-art__price-sub {
+  color: #9c7f56;
+}
+
+.promo-banner-mobile-art--plots {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  color: #0f172a;
+}
+
+.promo-banner-mobile-art--plots .promo-banner-mobile-art__icon {
+  border-color: #059669;
+  background: rgba(5, 150, 105, 0.12);
+}
+
+.promo-banner-mobile-art--plots .promo-banner-mobile-art__tag {
+  background: #059669;
+  color: #fff;
+}
+
+.promo-banner-mobile-art--plots .promo-banner-mobile-art__subtitle {
+  color: #047857;
+}
+
+.promo-banner-mobile-art--plots .promo-banner-mobile-art__meta {
+  color: #64748b;
+}
+
+.promo-banner-mobile-art--plots .promo-banner-mobile-art__price {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.promo-banner-mobile-art--plots .promo-banner-mobile-art__price-sub {
+  color: #6ee7b7;
+}
+
+.promo-banner-mobile-art--commercial {
+  background: linear-gradient(90deg, #1e1b4b 0%, #4c1d95 100%);
+  color: #f8fafc;
+}
+
+.promo-banner-mobile-art--commercial .promo-banner-mobile-art__icon {
+  border-color: #c4b5fd;
+  background: rgba(167, 139, 250, 0.15);
+}
+
+.promo-banner-mobile-art--commercial .promo-banner-mobile-art__tag {
+  background: #7c3aed;
+  color: #fff;
+}
+
+.promo-banner-mobile-art--commercial .promo-banner-mobile-art__subtitle {
+  color: #ddd6fe;
+}
+
+.promo-banner-mobile-art--commercial .promo-banner-mobile-art__meta {
+  color: #c4b5fd;
+}
+
+.promo-banner-mobile-art--commercial .promo-banner-mobile-art__price {
+  background: #c5a880;
+  color: #0f172a;
+}
+
+.promo-banner-mobile-art--commercial .promo-banner-mobile-art__price-sub {
+  color: #604b30;
+}
+
+.promo-slider-wrapper .swiper-pagination {
+  bottom: 8px !important;
+}
+
+@media (min-width: 768px) {
+  .promo-slider-wrapper .swiper-pagination {
+    bottom: 12px !important;
+  }
+}
+
+@media (max-height: 850px) and (min-width: 1025px) {
+  .promo-slider-wrapper.swiper {
+    height: auto !important;
+    aspect-ratio: 1920 / 220;
+    max-height: 180px;
+  }
+
+  .promo-banner-section.sidebar-open .promo-slider-wrapper.swiper {
+    height: auto !important;
+    aspect-ratio: 1920 / 220;
+    max-height: 140px;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 1025px) {
+  .promo-slider-wrapper.swiper {
+    height: auto !important;
+    aspect-ratio: 1920 / 220;
+    max-height: 150px;
+  }
+
+  .promo-banner-section.sidebar-open .promo-slider-wrapper.swiper {
+    height: auto !important;
+    aspect-ratio: 1920 / 220;
+    max-height: 120px;
+  }
+}

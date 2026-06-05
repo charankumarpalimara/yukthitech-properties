@@ -1,0 +1,149 @@
+/* ═══════════════════════════════════════════════════════════
+   HERO STYLE — Dark Luxury Full-Screen Layout
+   ═══════════════════════════════════════════════════════════ */
+
+/*
+ * Layout `<main>` adds padding-top: var(--navbar-height) for the fixed nav.
+ * Pull hero up so its background sits under the transparent home navbar,
+ * then pad content down so nothing hides behind the nav bar.
+ */
+.hero {
+  margin-top: calc(-1 * var(--navbar-height));
+  padding-top: calc(var(--navbar-height) + 1rem);
+  position: relative;
+  z-index: 0;
+}
+
+@media (min-width: 640px) {
+  .hero {
+    padding-top: calc(var(--navbar-height) + 1.5rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding-top: calc(var(--navbar-height) + 2rem);
+  }
+}
+
+/* ── Entrance animations ───────────────────────────────────── */
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes charSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ── Floating accent cards ─────────────────────────────────── */
+@keyframes heroFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes heroFloatDelay {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.hero-float-card {
+  animation: heroFloat 7s ease-in-out infinite;
+}
+
+.hero-float-card-delay {
+  animation: heroFloatDelay 7s ease-in-out infinite;
+  animation-delay: 3s;
+}
+
+/* ── Stat cards ────────────────────────────────────────────── */
+.hero-stat-card {
+  animation: heroFadeUp 0.6s ease-out both;
+}
+
+/* ── Category pill hover shimmer ───────────────────────────── */
+@keyframes pillShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.hero-cat-pill {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.hero-cat-pill:hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(197, 168, 128, 0.12) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: pillShimmer 0.6s ease forwards;
+  pointer-events: none;
+}
+
+/* ── Scrollbar hidden ──────────────────────────────────────── */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── Hero mobile layout ──────────────────────────────────────── */
+.hero-search-tabs::before,
+.hero-search-tabs::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1.25rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-search-tabs::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(248, 250, 252, 0.95), transparent);
+}
+
+.hero-search-tabs::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(248, 250, 252, 0.95), transparent);
+}
+
+@media (min-width: 640px) {
+  .hero-search-tabs::before,
+  .hero-search-tabs::after {
+    display: none;
+  }
+}

@@ -1,0 +1,57 @@
+name: Deploy React to AWS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      # Checkout
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Node setup
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      # Install deps
+      - name: Install dependencies
+        run: npm install
+
+      # Build
+      - name: Build project
+        run: npm run build
+
+      # Debug (VERY IMPORTANT)
+      - name: Verify build files
+        run: ls -la dist
+
+      # Clean old files on server
+      # - name: Clean server folder
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.SERVER_HOST }}
+      #     username: ${{ secrets.SERVER_USER }}
+      #     key: ${{ secrets.SERVER_SSH_KEY }}
+      #     script: |
+      #       rm -rf /var/www/html/digitalraiz/sherlaproperties/web/*
+
+      # Upload FULL build folder
+      - name: Deploy to server  
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          source: "dist/"
+          target: "/var/www/html/digitalraiz/sherlaproperties/web"
+          overwrite: true
+          command_timeout: 30m
+          strip_components: 1

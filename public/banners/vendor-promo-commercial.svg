@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 220" width="1920" height="220" role="img" aria-label="Promoted commercial property">
+  <defs>
+    <linearGradient id="commercial-bg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#4c1d95"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="220" fill="url(#commercial-bg)"/>
+
+  <!-- Left icon -->
+  <rect x="48" y="62" width="100" height="96" rx="10" fill="#a78bfa" fill-opacity="0.15" stroke="#c4b5fd" stroke-width="2"/>
+  <rect x="62" y="82" width="22" height="58" fill="#c4b5fd" fill-opacity="0.55"/>
+  <rect x="90" y="98" width="22" height="42" fill="#c4b5fd" fill-opacity="0.75"/>
+  <rect x="118" y="110" width="18" height="30" fill="#c4b5fd"/>
+
+  <!-- Tag row -->
+  <rect x="172" y="58" width="210" height="26" rx="13" fill="#7c3aed"/>
+  <text x="188" y="76" fill="#ffffff" font-family="Arial,sans-serif" font-size="13" font-weight="800" letter-spacing="0.5">PROMOTED PROPERTY</text>
+
+  <!-- Content -->
+  <text x="172" y="108" fill="#f8fafc" font-family="Arial,sans-serif" font-size="32" font-weight="700">Commercial Office Space</text>
+  <text x="172" y="138" fill="#ddd6fe" font-family="Arial,sans-serif" font-size="20" font-weight="600">Hi-Tec City - 2,400 SFT</text>
+  <text x="172" y="164" fill="#c4b5fd" font-family="Arial,sans-serif" font-size="15" font-weight="500">Skyline Business Parks</text>
+
+  <!-- Price card -->
+  <rect x="1540" y="62" width="332" height="96" rx="12" fill="#fbbf24"/>
+  <text x="1564" y="100" fill="#0f172a" font-family="Arial,sans-serif" font-size="28" font-weight="800">Lease Available</text>
+  <text x="1564" y="128" fill="#78350f" font-family="Arial,sans-serif" font-size="14" font-weight="700">Book a Site Visit</text>
+</svg>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 280" width="750" height="280" role="img" aria-label="Sponsored property listing">
+  <defs>
+    <linearGradient id="fl-m" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#022c22"/>
+      <stop offset="100%" stop-color="#065f46"/>
+    </linearGradient>
+  </defs>
+  <rect width="750" height="280" fill="url(#fl-m)"/>
+  <rect x="20" y="72" width="64" height="64" rx="10" fill="#f8fafc" fill-opacity="0.1" stroke="#c5a880" stroke-width="2"/>
+  <polygon fill="#c5a880" points="46,122 30,122 30,98 40,86 52,98"/>
+  <rect x="38" y="108" width="10" height="14" fill="#c5a880"/>
+  <rect x="100" y="56" width="128" height="26" rx="13" fill="#c5a880"/>
+  <text x="116" y="74" fill="#0f172a" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="800">SPONSORED</text>
+  <text x="100" y="118" fill="#f8fafc" font-family="Arial,Helvetica,sans-serif" font-size="26" font-weight="700">3 BHK Apartment</text>
+  <text x="100" y="152" fill="#f5ecd8" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="600">Banjara Hills, Hyderabad</text>
+  <text x="100" y="182" fill="#a7f3d0" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="500">Prime Realtors - RERA Verified</text>
+  <rect x="480" y="72" width="250" height="96" rx="12" fill="#ffffff" fill-opacity="0.96"/>
+  <text x="504" y="118" fill="#0f172a" font-family="Arial,Helvetica,sans-serif" font-size="26" font-weight="800">Rs. 1.2 Cr</text>
+  <text x="504" y="148" fill="#9c7f56" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700">Ready to Move</text>
+</svg>

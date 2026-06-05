@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Dark emerald background -->
+  <rect width="64" height="64" rx="14" fill="#023526"/>
+  <!-- Scale 24→64: multiply coords by 64/24 ≈ 2.667 -->
+  <!-- Roof: M3 9 l9-6 9 6  → M8 24 l24-16 24 16 -->
+  <path d="M8 24 l24-16 24 16" fill="none" stroke="#c5a880" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- House walls: M5 9v11... → simplified outline -->
+  <path d="M13.3 24v26.7a2.67 2.67 0 0 0 2.67 2.67h32a2.67 2.67 0 0 0 2.67-2.67V24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Y fork: M7 9 l5 5 5-5 → M18.7 24 l13.3 13.3 13.3-13.3 -->
+  <path d="M18.7 24 l13.3 13.3 13.3-13.3" fill="none" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Y stem: M12 14v7 → M32 37.3v13.3 -->
+  <line x1="32" y1="37.3" x2="32" y2="50.7" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+</svg>

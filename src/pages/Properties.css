@@ -1,0 +1,17 @@
+/* Align properties results page with home feed typography */
+.properties-page {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.properties-page h2,
+.properties-page h3 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.properties-page .properties-results-heading {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #475569;
+}

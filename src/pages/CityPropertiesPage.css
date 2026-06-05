@@ -1,0 +1,82 @@
+.city-page {
+  font-family: var(--font-outfit);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  animation: fadeIn 0.8s ease-out;
+  -webkit-font-smoothing: antialiased;
+}
+
+.city-page button,
+.city-page input,
+.city-page select {
+  font-family: inherit;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.city-page .no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.city-page .no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Glassmorphism for floating elements */
+.city-page .blur-glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Custom scrollbar for some sections */
+.city-page .custom-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.city-page .custom-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.city-page .custom-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.city-page .custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Floating animation for hero elements */
+.city-page .animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Sophisticated text gradient */
+.city-page .text-gradient {
+  background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

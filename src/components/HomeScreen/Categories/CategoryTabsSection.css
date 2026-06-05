@@ -1,0 +1,132 @@
+/* ═══════════════════════════════════════════════════════════════
+   CategoryTabsSection — Horizontal image-pill tab bar styles
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Tab base ──────────────────────────────────────────────────── */
+.cat-tab {
+  position: relative;
+  outline: none;
+}
+
+.cat-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  border-radius: 9999px;
+  background: #023526;
+  opacity: 0;
+  transform: scaleX(0.6);
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.cat-tab--active::after {
+  opacity: 0;
+  /* using bottom border via parent border instead */
+}
+
+/* ── Scroll arrow buttons ─────────────────────────────────────── */
+.cat-scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.cat-scroll-arrow:hover {
+  background: #023526;
+  border-color: #023526;
+  color: white;
+  box-shadow: 0 4px 12px rgba(2, 53, 38, 0.2);
+}
+
+.cat-scroll-arrow--left {
+  left: -1rem;
+}
+
+.cat-scroll-arrow--right {
+  right: -1rem;
+}
+
+@media (max-width: 639px) {
+  .cat-scroll-arrow--left {
+    left: 0;
+  }
+
+  .cat-scroll-arrow--right {
+    right: 0;
+  }
+}
+
+/* ── Property grid entry animation ────────────────────────────── */
+.cat-panel-grid>* {
+  animation: catCardFadeIn 0.35s ease-out both;
+}
+
+.cat-panel-grid>*:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.cat-panel-grid>*:nth-child(2) {
+  animation-delay: 40ms;
+}
+
+.cat-panel-grid>*:nth-child(3) {
+  animation-delay: 80ms;
+}
+
+.cat-panel-grid>*:nth-child(4) {
+  animation-delay: 120ms;
+}
+
+.cat-panel-grid>*:nth-child(5) {
+  animation-delay: 160ms;
+}
+
+.cat-panel-grid>*:nth-child(6) {
+  animation-delay: 200ms;
+}
+
+.cat-panel-grid>*:nth-child(7) {
+  animation-delay: 240ms;
+}
+
+.cat-panel-grid>*:nth-child(8) {
+  animation-delay: 280ms;
+}
+
+@keyframes catCardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Hide scrollbar on tab row ────────────────────────────────── */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
