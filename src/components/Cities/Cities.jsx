@@ -45,10 +45,10 @@ export default function Cities({ isSidebarOpen, popularCities }) {
   return (
     <section className="w-full">
       <HomeSectionHeader
-        eyebrow="Top destinations"
-        title="Explore cities"
-        subtitle="Find verified properties in India's fastest-growing urban hubs"
-        viewAllLabel="All cities"
+        eyebrow="Browse by location"
+        title="Search by City"
+        subtitle="Discover homes, plots & commercial spaces across India's top cities"
+        viewAllLabel="View all cities"
         showNav
         prevClass="city-prev-btn"
         nextClass="city-next-btn"
@@ -75,57 +75,57 @@ export default function Cities({ isSidebarOpen, popularCities }) {
         >
           {cities.map((city) => (
             <SwiperSlide key={city.name}>
+              {/* ── Unified card ── */}
               <div
-                className="group relative hidden h-[200px] cursor-pointer overflow-hidden rounded-2xl bg-slate-900 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:block"
+                className="group cursor-pointer rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(2,53,38,0.12)] hover:border-[#023526]/20"
                 onMouseEnter={preloadCityPage}
                 onClick={() => goToCity(city.name)}
                 onKeyDown={(e) => e.key === 'Enter' && goToCity(city.name)}
                 role="button"
                 tabIndex={0}
+                aria-label={`Explore properties in ${formatCityName(city.name)}`}
               >
-                <img
-                  src={resolveCityCardImage(city.image, 480)}
-                  alt={city.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover opacity-90 transition-all duration-500 group-hover:scale-105 group-hover:opacity-100"
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent p-5">
-                  <div className="text-lg font-semibold text-white">
-                    {formatCityName(city.name)}
-                  </div>
-                  <div className="text-xs font-medium tracking-wide text-white/75">
-                    {city.propertyCount} listings
-                  </div>
+                {/* image */}
+                <div className="relative h-[150px] overflow-hidden bg-slate-100">
+                  <img
+                    src={resolveCityCardImage(city.image, 480)}
+                    alt={city.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-transparent" />
+                  <span className="absolute top-2.5 right-2.5 inline-flex items-center rounded-full bg-black/50 backdrop-blur-sm px-2.5 py-1 text-[10px] font-bold text-white">
+                    {city.propertyCount ?? '—'} listings
+                  </span>
                 </div>
-              </div>
 
-              <button
-                type="button"
-                className="flex w-full flex-col items-center gap-2.5 md:hidden"
-                onMouseEnter={preloadCityPage}
-                onClick={() => goToCity(city.name)}
-              >
-                <div className="h-[80px] w-[80px] rounded-full bg-gradient-to-tr from-amber-500 to-amber-200 p-[3px] shadow-md">
-                  <div className="h-full w-full overflow-hidden rounded-full border-2 border-white">
-                    <img
-                      src={resolveCityCardImage(city.image, 160)}
-                      alt={city.name}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-full w-full object-cover"
-                    />
+                {/* body */}
+                <div className="flex items-center justify-between px-3.5 py-3">
+                  <div>
+                    <p className="m-0 text-[14.5px] font-bold text-slate-900 leading-tight">
+                      {formatCityName(city.name)}
+                    </p>
+                    <p className="m-0 text-[11px] text-slate-400 font-medium mt-0.5">
+                      {city.propertyCount ? `${city.propertyCount} properties available` : 'Properties available'}
+                    </p>
+                  </div>
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-400 transition-all duration-200 group-hover:bg-[#023526] group-hover:border-[#023526] group-hover:text-white">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
                   </div>
                 </div>
-                <span className="text-sm font-medium text-slate-800">
-                  {formatCityName(city.name)}
-                </span>
-              </button>
+
+                {/* animated bottom accent */}
+                <div className="h-[3px] w-0 bg-gradient-to-r from-[#c5a880] to-[#023526] transition-all duration-300 group-hover:w-full" />
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
 
+      {/* ── All Cities Modal ── */}
       {isModalOpen && (
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm sm:p-6"
@@ -133,80 +133,90 @@ export default function Cities({ isSidebarOpen, popularCities }) {
           role="presentation"
         >
           <div
-            className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl sm:rounded-3xl"
+            className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-labelledby="cities-modal-title"
           >
-            <div className="flex items-start justify-between border-b border-slate-100 px-6 py-5 sm:px-8">
+            {/* header */}
+            <div className="flex items-start justify-between border-b border-slate-100 px-6 py-4 sm:px-8">
               <div>
-                <h3
-                  id="cities-modal-title"
-                  className="text-xl font-semibold text-slate-900 sm:text-2xl"
-                >
-                  All cities
+                <h3 id="cities-modal-title" className="text-lg font-bold text-slate-900">
+                  All Cities
                 </h3>
-                <p className="mt-1 text-base text-slate-500">{cities.length} cities available</p>
+                <p className="mt-0.5 text-sm text-slate-500">{cities.length} cities available</p>
               </div>
               <button
                 type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition-colors hover:bg-slate-100"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition-colors hover:bg-slate-50"
                 onClick={() => setIsModalOpen(false)}
                 aria-label="Close"
               >
-                <CloseIco className="h-5 w-5" />
+                <CloseIco className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="border-b border-slate-100 px-6 py-4 sm:px-8">
-              <div className="flex h-12 items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 focus-within:border-amber-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-amber-500/20">
-                <SearchIco className="text-amber-600" />
+            {/* search */}
+            <div className="border-b border-slate-100 px-6 py-3 sm:px-8">
+              <div className="flex h-11 items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 focus-within:border-[#023526] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#023526]/10 transition-all">
+                <SearchIco className="text-slate-400 shrink-0" />
                 <input
                   type="text"
-                  placeholder="Search city name..."
-                  className="flex-1 border-none bg-transparent text-base font-medium text-slate-900 outline-none placeholder:text-slate-400"
+                  placeholder="Search city…"
+                  className="flex-1 border-none bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   autoFocus
                 />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="text-slate-400 hover:text-slate-600 transition-colors"
+                    aria-label="Clear search"
+                  >
+                    <CloseIco className="h-3.5 w-3.5" />
+                  </button>
+                )}
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 py-6 sm:px-8">
+            {/* grid */}
+            <div className="flex-1 overflow-y-auto px-6 py-5 sm:px-8">
               {filteredCities.length > 0 ? (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                   {filteredCities.map((city) => (
                     <button
                       key={city.name}
                       type="button"
-                      className="flex items-center gap-3 rounded-xl border border-slate-100 p-2.5 text-left transition-all hover:border-amber-400 hover:bg-amber-50"
+                      className="flex items-center gap-3 rounded-xl border border-slate-100 p-2.5 text-left transition-all hover:border-[#023526]/30 hover:bg-[#023526]/4 group"
                       onMouseEnter={preloadCityPage}
                       onClick={() => goToCity(city.name)}
                     >
-                      <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg">
+                      <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-slate-100">
                         <img
                           src={resolveCityCardImage(city.image, 88)}
                           alt=""
                           loading="lazy"
                           decoding="async"
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-slate-900">
+                        <p className="m-0 truncate text-sm font-semibold text-slate-900 group-hover:text-[#023526] transition-colors">
                           {formatCityName(city.name)}
-                        </div>
-                        <div className="text-xs font-medium text-slate-500">
-                          {city.propertyCount} listings
-                        </div>
+                        </p>
+                        <p className="m-0 text-[11px] font-medium text-slate-400">
+                          {city.propertyCount ?? '—'} listings
+                        </p>
                       </div>
                     </button>
                   ))}
                 </div>
               ) : (
                 <p className="py-12 text-center text-sm text-slate-500">
-                  No cities match your search.
+                  No cities match &quot;{searchQuery}&quot;.
                 </p>
               )}
             </div>

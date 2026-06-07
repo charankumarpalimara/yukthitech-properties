@@ -17,7 +17,7 @@ export const upSectionLine = 'flex-1 h-px bg-slate-100';
 
 export const upFieldGrid = 'grid grid-cols-1 md:grid-cols-3 gap-4';
 
-export const upFieldGrid2 = 'grid grid-cols-1 sm:grid-cols-2 gap-4';
+export const upFieldGrid2 = 'grid grid-cols-2 sm:grid-cols-2 gap-4';
 
 export const upField = 'flex flex-col gap-1.5';
 

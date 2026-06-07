@@ -596,7 +596,7 @@ const CityPropertiesPage = () => {
 
 
 
-      <button type="button" className="h-11 px-8 rounded-xl bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 shrink-0">Connect with Expert</button>
+      {/* <button type="button" className="h-11 px-8 rounded-xl bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 shrink-0">Connect with Expert</button> */}
 
 
     </div >

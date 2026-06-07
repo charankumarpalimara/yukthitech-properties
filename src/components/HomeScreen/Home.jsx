@@ -44,11 +44,11 @@ function SectionPlaceholder({ tall = false }) {
   );
 }
 
-function HomeBannerSlot({ slotIndex, className }) {
+function HomeBannerSlot({ slotIndex, className, banners = [], dynamic = false }) {
   return (
     <LazyMountSection
       className={className}
-      minHeight="132px"
+      minHeight={dynamic ? '148px' : '148px'}
       rootMargin="320px 0px"
       fallback={
         <div className="home-section-banner">
@@ -58,7 +58,11 @@ function HomeBannerSlot({ slotIndex, className }) {
         </div>
       }
     >
-      <HomeSectionBanner slotIndex={slotIndex} />
+      <HomeSectionBanner
+        slotIndex={slotIndex}
+        apiBanners={dynamic ? banners : []}
+        variant={dynamic ? 'dynamic' : 'coded'}
+      />
     </LazyMountSection>
   );
 }
@@ -124,7 +128,12 @@ export default function Home() {
 
       {/* Banner: after categories, before main feed */}
       {!loading && hasFeedContent && (
-        <HomeBannerSlot slotIndex={0} className="home-section-banner--after-categories" />
+        <HomeBannerSlot
+          slotIndex={0}
+          banners={feed.banners}
+          dynamic
+          className="home-section-banner--after-categories"
+        />
       )}
 
       {/* ── Main feed ────────────────────────────────────────────── */}

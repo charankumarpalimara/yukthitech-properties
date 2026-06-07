@@ -10,7 +10,7 @@ import './PromoBannerSlider.css';
 import MobilePromoBannerArt, { isStaticMobileDemo } from './MobilePromoBannerArt';
 import { STATIC_DEMO_BANNERS, getDisplayBanners } from './bannerUtils';
 
-function PromoBannerImage({ banner, fallbackWeb, fallbackMobile }) {
+export function PromoBannerImage({ banner, fallbackWeb, fallbackMobile }) {
   const isMobileViewport = useMaxWidth(767);
   const [webSrc, setWebSrc] = useState(banner.img);
   const [mobileSrc, setMobileSrc] = useState(banner.imgMobile || banner.img);

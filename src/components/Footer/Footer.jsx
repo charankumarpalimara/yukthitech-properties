@@ -284,49 +284,35 @@ export default function Footer() {
       <h2 className="sr-only">Yukthi Properties footer</h2>
 
       {/* 1. Floating CTA Box */}
-      <div className={`mx-auto max-w-[1350px] -translate-y-8 relative z-10 ${FOOTER_X}`}>
-        <div className="relative flex flex-col lg:flex-row items-center justify-between gap-8 rounded-2xl p-7 md:p-9 bg-gradient-to-br from-[#023526] via-[#034432] to-[#011a12] shadow-[0_20px_40px_rgba(2,53,38,0.12)] border border-[#c5a880]/15 overflow-hidden">
-          {/* Subtle grid pattern overlay */}
-          <div className="absolute inset-0 opacity-[0.05] bg-[radial-gradient(#c5a880_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
-
-          <div className="relative z-10 flex min-w-0 items-start gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 border border-white/10 shadow-inner">
-              <Building2 size={20} className="text-[#c5a880]" strokeWidth={2} />
-            </div>
-            <div className="space-y-1 text-left">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#c5a880]/10 border border-[#c5a880]/20 text-[10px] font-semibold text-[#c5a880] uppercase tracking-wider">
-                <Crown size={10} className="animate-pulse" /> Exclusive Platform
-              </span>
-              <p className="m-0 text-lg md:text-xl font-bold text-white tracking-tight">
-                {isSeller
-                  ? 'Grow your real estate business with us'
-                  : 'List your property & reach verified buyers'}
-              </p>
-              <p className="m-0 text-[13px] font-light text-slate-300 max-w-xl">
-                {isSeller
-                  ? 'Manage listings, track leads, and grow with Yukthi Properties.'
-                  : 'Owners, agents & builders — publish your listing in minutes.'}
-              </p>
-            </div>
+      <div className={`mx-auto max-w-[1350px] -translate-y-6 relative z-10 ${FOOTER_X}`}>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl bg-[#023526] px-6 py-4 shadow-[0_8px_24px_rgba(2,53,38,0.15)]">
+          <div className="text-center sm:text-left">
+            <p className="m-0 text-[15px] font-bold text-white leading-snug">
+              {isSeller ? 'Grow your real estate business with us' : 'Find & list properties with ease'}
+            </p>
+            <p className="m-0 text-[12px] text-white/55 mt-0.5">
+              {isSeller ? 'Manage listings, track leads — all in one place.' : 'Verified homes, plots & commercial spaces across India.'}
+            </p>
           </div>
-          <div className="relative z-10 flex flex-wrap gap-3 shrink-0">
+          <div className="flex gap-2.5 shrink-0">
             <Link
               to="/subscription"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#c5a880] to-[#b4966c] px-6 py-3 text-[13.5px] font-bold text-slate-950 no-underline shadow-lg hover:shadow-[#c5a880]/15 hover:scale-[1.02] transition-all duration-200 active:scale-[0.98]"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[#c5a880] px-4 py-2 text-[12.5px] font-bold text-slate-900 no-underline hover:bg-[#d4b892] transition-colors whitespace-nowrap"
             >
-              <Crown size={15} strokeWidth={2.25} aria-hidden />
-              Seller Plans
+              <Crown size={13} strokeWidth={2.5} />
+              {isSeller ? 'Seller Plans' : 'List Property'}
             </Link>
             <Link
               to="/properties"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-[13.5px] font-semibold text-white no-underline hover:bg-white/10 hover:border-white/30 transition duration-200"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-white/25 px-4 py-2 text-[12.5px] font-semibold text-white no-underline hover:bg-white/10 transition-colors whitespace-nowrap"
             >
-              Browse Properties
-              <ArrowRight size={15} strokeWidth={2.25} aria-hidden />
+              Browse
+              <ArrowRight size={13} strokeWidth={2.5} />
             </Link>
           </div>
         </div>
       </div>
+
 
       {/* 2. Main content wrapper */}
       <div className="relative w-full overflow-hidden">
