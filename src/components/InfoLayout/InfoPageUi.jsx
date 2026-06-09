@@ -20,12 +20,27 @@ export function InfoPageBody({ loading, cmsHtml, children }) {
     return <InfoProse>{parse(cleaned)}</InfoProse>;
   }
 
-  return <div className="info-body">{children}</div>;
+  return <div className="flex flex-col gap-6 sm:gap-7">{children}</div>;
 }
+
+const infoProseClasses = [
+  'max-w-none text-[0.9375rem] leading-relaxed text-slate-600',
+  '[&_p]:mb-4 [&_p:last-child]:mb-0',
+  '[&_.info-prose-block]:mb-4 [&_.info-prose-block:last-child]:mb-0',
+  '[&_h2]:mt-7 [&_h2]:mb-2 [&_h2]:border-b [&_h2]:border-slate-200 [&_h2]:pb-2 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:!text-slate-900',
+  '[&_h3]:mt-5 [&_h3]:mb-2 [&_h3]:text-[1.0625rem] [&_h3]:font-semibold [&_h3]:!text-slate-900',
+  '[&_h4]:mt-4 [&_h4]:mb-2 [&_h4]:text-base [&_h4]:font-semibold [&_h4]:!text-slate-900',
+  '[&_h2:first-child]:mt-0 [&_h3:first-child]:mt-0',
+  '[&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-5',
+  '[&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-5',
+  '[&_li]:mb-1.5 [&_li::marker]:text-slate-400',
+  '[&_a]:font-semibold [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-primary-dark',
+  '[&_strong]:font-semibold [&_strong]:text-slate-700 [&_b]:font-semibold [&_b]:text-slate-700',
+].join(' ');
 
 /** CMS HTML from admin */
 export function InfoProse({ children, className = '' }) {
-  return <div className={`info-prose max-w-none ${className}`}>{children}</div>;
+  return <div className={`${infoProseClasses} ${className}`}>{children}</div>;
 }
 
 export function InfoLead({ children, className = '' }) {
@@ -48,9 +63,13 @@ export function InfoText({ children, className = '' }) {
 
 export function InfoSectionTitle({ children, label, className = '' }) {
   return (
-    <div className={`info-section-head ${className}`}>
-      {label && <span className="section-label">{label}</span>}
-      <h2 className="section-title">{children}</h2>
+    <div className={`m-0 ${className}`}>
+      {label && (
+        <span className="mb-1.5 block text-[0.72rem] font-semibold uppercase tracking-widest text-primary-dark">
+          {label}
+        </span>
+      )}
+      <h2 className="m-0 border-none p-0 text-xl font-semibold text-slate-900">{children}</h2>
     </div>
   );
 }

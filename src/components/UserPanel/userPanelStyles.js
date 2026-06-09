@@ -1,6 +1,6 @@
 /** Tailwind class bundles for User Panel (no separate CSS — avoids clash with global .form-input) */
 
-export const upCard = 'bg-white border border-slate-100 rounded-md p-6 sm:p-7 mb-6 shadow-sm';
+export const upCard = 'bg-white border border-slate-100 rounded-md p-4 sm:p-6 lg:p-7 mb-4 sm:mb-6 shadow-sm';
 
 export const upTitle = 'text-lg font-semibold text-slate-900 tracking-tight mb-1';
 
@@ -70,15 +70,22 @@ export const upDivider = 'h-px bg-slate-100 my-5';
 export const upBtnLogin = 'px-5 py-2.5 rounded-lg font-semibold bg-primary text-white transition-all hover:bg-primary-dark';
 
 // Mobile Header & Tabs
-export const upMobileHeaderAvatar = 'w-14 h-14 rounded-full bg-gold-50 border border-gold-500/20 flex items-center justify-center text-gold-700 overflow-hidden shrink-0';
-export const upMobileTabContainer = 'flex bg-slate-100/80 p-1 rounded-2xl gap-1 shadow-inner border border-slate-200/40';
-export const upMobileTabActive = 'bg-white text-primary shadow-[0_4px_16px_rgba(0,0,0,0.06)] border-none';
-export const upMobileTabInactive = 'text-slate-500 hover:text-slate-900 border-none bg-transparent';
-export const upMobileTabIconActive = 'text-primary scale-110';
-export const upMobileTabIconInactive = 'text-slate-400 group-hover:scale-110';
+export const upMobileHeaderAvatar =
+  'w-12 h-12 rounded-full bg-gold-50 border border-gold-500/20 flex items-center justify-center text-gold-700 overflow-hidden shrink-0';
+export const upMobileTabScroller =
+  '-mx-3 sm:-mx-4 px-3 sm:px-4 overflow-x-auto overscroll-x-contain scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden';
+export const upMobileTabContainer = 'flex w-max min-w-full items-stretch gap-1.5 pb-0.5';
+export const upMobileTabButton =
+  'relative inline-flex min-w-[4.5rem] max-w-[5.25rem] shrink-0 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2.5 text-center transition-all duration-200 active:scale-[0.97]';
+export const upMobileTabActive =
+  'border-primary/20 bg-white text-primary shadow-[0_2px_10px_rgba(2,53,38,0.08)]';
+export const upMobileTabInactive =
+  'border-transparent bg-slate-100/70 text-slate-500 hover:bg-white hover:text-slate-800';
+export const upMobileTabIconActive = 'text-primary';
+export const upMobileTabIconInactive = 'text-slate-400';
+export const upMobileTabLabel = 'w-full text-[0.65rem] font-semibold leading-tight line-clamp-2';
 export const upMobileTabBadgeActive = 'bg-primary text-white';
 export const upMobileTabBadgeInactive = 'bg-slate-200 text-slate-600';
-export const upMobileTabIndicator = 'absolute bottom-1 w-5 h-1 bg-gold rounded-full';
 
 // Sidebar
 export const upSidebarContainer = 'bg-white border border-slate-200/60 rounded-[20px] overflow-hidden sticky top-[90px] shadow-[0_8px_30px_rgba(15,23,42,0.04)] lg:block hidden';
@@ -130,10 +137,10 @@ export const upSettingsSpinner = 'animate-spin rounded-full h-6 w-6 border-b-2 b
 export const upSettingsLegalActive = 'group-hover:text-gold-600';
 
 // ── Vendor dashboard pages (Transactions, Support, etc.) ──
-export const vpPage = 'space-y-4 pb-12 font-sans';
+export const vpPage = 'space-y-4 pb-8 sm:pb-12 font-sans';
 
 export const vpHeader =
-  'flex flex-col sm:flex-row sm:items-center justify-between bg-white px-6 py-4 rounded-md border border-slate-100 shadow-sm gap-4';
+  'flex flex-col sm:flex-row sm:items-center justify-between bg-white px-4 py-3.5 sm:px-6 sm:py-4 rounded-md border border-slate-100 shadow-sm gap-3 sm:gap-4';
 
 export const vpHeaderTitle = 'text-xl font-semibold text-slate-900 leading-none';
 
@@ -158,9 +165,10 @@ export const vpStatSub = 'text-xs font-medium text-slate-500 mt-1';
 export const vpPanel = 'bg-white rounded-md border border-slate-100 shadow-sm overflow-hidden';
 
 export const vpPanelToolbar =
-  'flex flex-col sm:flex-row sm:items-center gap-3 px-5 py-4 border-b border-slate-100 bg-slate-50/40';
+  'flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3.5 sm:px-5 sm:py-4 border-b border-slate-100 bg-slate-50/40';
 
-export const vpPanelFooter = 'px-5 py-4 bg-slate-50/40 border-t border-slate-100';
+export const vpPanelFooter =
+  'px-4 py-3.5 sm:px-5 sm:py-4 bg-slate-50/40 border-t border-slate-100';
 
 export const vpSearchWrap = 'relative flex-1 min-w-0 w-full group';
 

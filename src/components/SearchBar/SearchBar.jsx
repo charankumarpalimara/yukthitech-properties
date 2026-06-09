@@ -41,13 +41,14 @@ export default function SearchBar({ isNavbar = false, variant = 'default' }) {
   const isHeroVariant = variant === 'hero' && !isNavbar;
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const locationRef = useRef(null);
   const rootRef = useRef(null);
   const dropdownAnchorRef = useRef(null);
   const prevPathnameRef = useRef(pathname);
   const [isLocationFocused, setIsLocationFocused] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isGpsLoading, setIsGpsLoading] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches
+  );
   const [dropdownRect, setDropdownRect] = useState(null);
   const {
     activeTab,
@@ -144,13 +145,12 @@ export default function SearchBar({ isNavbar = false, variant = 'default' }) {
       ? ['All Residential', ...categories.map((c) => c.name)]
       : PROPERTY_TYPES[activeTab] || PROPERTY_TYPES.Buy;
 
-  // Lock body scroll when mobile search is open
   useEffect(() => {
-    document.body.style.overflow = isMobileOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isMobileOpen]);
+    const mq = window.matchMedia('(max-width: 767px)');
+    const onChange = () => setIsMobileViewport(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   // Home hero search: drop filters from a prior /properties visit so they are not re-sent
   useEffect(() => {
@@ -186,7 +186,7 @@ export default function SearchBar({ isNavbar = false, variant = 'default' }) {
   }, []);
 
   useEffect(() => {
-    if (!isLocationFocused || isNavbar) {
+    if (!isLocationFocused || isNavbar || isMobileViewport) {
       setDropdownRect(null);
       return undefined;
     }
@@ -197,22 +197,23 @@ export default function SearchBar({ isNavbar = false, variant = 'default' }) {
       window.removeEventListener('resize', updateDropdownRect);
       window.removeEventListener('scroll', updateDropdownRect, true);
     };
-  }, [isLocationFocused, isNavbar, updateDropdownRect, query, suggestions.length]);
+  }, [isLocationFocused, isNavbar, isMobileViewport, updateDropdownRect, query, suggestions.length]);
 
   // Close suggestions on outside click
   useEffect(() => {
     const handleOut = (e) => {
       const isInsideRoot = rootRef.current && rootRef.current.contains(e.target);
-      const mobileModal = document.getElementById('mobile-search-modal');
-      const isInsideMobileModal = mobileModal && mobileModal.contains(e.target);
       const suggestionsDropdown = document.getElementById('search-suggestions-dropdown');
       const isInsideSuggestionsDropdown =
         suggestionsDropdown && suggestionsDropdown.contains(e.target);
+      const mobileSuggestionsDropdown = document.getElementById('mobile-search-suggestions');
+      const isInsideMobileSuggestions =
+        mobileSuggestionsDropdown && mobileSuggestionsDropdown.contains(e.target);
 
       if (
         !isInsideRoot &&
-        !isInsideMobileModal &&
-        !isInsideSuggestionsDropdown
+        !isInsideSuggestionsDropdown &&
+        !isInsideMobileSuggestions
       ) {
         setIsLocationFocused(false);
         clearSuggestions();
@@ -229,8 +230,8 @@ export default function SearchBar({ isNavbar = false, variant = 'default' }) {
 
   const handleSearch = (e, paramsOverride = {}) => {
     e?.preventDefault();
-    setIsMobileOpen(false);
-    document.body.style.overflow = '';
+    setIsLocationFocused(false);
+    clearSuggestions();
 
     contextHandleSearch(e, buildSearchPayload(paramsOverride));
   };
@@ -294,7 +295,8 @@ export default function SearchBar({ isNavbar = false, variant = 'default' }) {
 
   const handleInputFocus = () => {
     setIsLocationFocused(true);
-    if (!query) {
+    // Default suggestion panel (types, budget, popular cities) — desktop only
+    if (!isMobileViewport && !query) {
       fetchDefaultSuggestions();
     }
   };
@@ -305,8 +307,6 @@ export default function SearchBar({ isNavbar = false, variant = 'default' }) {
 
     setIsLocationFocused(false);
     clearSuggestions();
-    setIsMobileOpen(false);
-    document.body.style.overflow = '';
 
     const isKnownCity =
       cities?.some((c) => (c.name || '').toLowerCase() === trimmed.toLowerCase()) ||
@@ -369,216 +369,21 @@ export default function SearchBar({ isNavbar = false, variant = 'default' }) {
     );
   };
 
-  const showDropdown = isLocationFocused;
+  const showMobileQueryDropdown = isLocationFocused && isMobileViewport && query.length >= 2;
   // Show city/location in box when no text query — so users see what they navigated with
   const displayValue = query || location;
 
-  // ── Mobile Full-Screen Modal ──────────────────────────
-  const mobileModal =
-    isMobileOpen &&
-    ReactDOM.createPortal(
-      <div
-        id="mobile-search-modal"
-        className="fixed inset-0 h-dvh bg-slate-50 z-[9999] flex flex-col overscroll-contain overflow-hidden font-sans text-slate-600"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-slate-100 bg-white shrink-0 z-[10] shadow-sm">
-          <div className="flex items-center gap-3">
-            <button
-              className="w-10 h-10 rounded-full border border-slate-200 bg-slate-50 text-slate-700 flex items-center justify-center shrink-0 active:scale-95 transition"
-              onClick={() => setIsMobileOpen(false)}
-              aria-label="Back"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-4 h-4"
-              >
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </button>
-            <span className="text-base font-bold text-slate-900 tracking-tight">
-              Find Your Residence
-            </span>
-          </div>
-          <span className="text-[9.5px] font-bold uppercase tracking-[0.2em] text-[#c5a880] bg-[#c5a880]/10 px-2.5 py-1.5 rounded-full">
-            Yukthi Elite
-          </span>
-        </div>
-
-        {/* Tab switcher */}
-        <div className="flex gap-2 px-4 pt-4 shrink-0 bg-white pb-3">
-          {SEARCH_TABS.map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 border-none ${activeTab === tab
-                  ? 'bg-[#023526] text-white shadow-md'
-                  : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800'
-                }`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        {/* Scrollable body */}
-        <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-5">
-          {/* Location field */}
-          <div className="flex flex-col gap-2.5" ref={locationRef}>
-            <label className="text-[9.5px] font-bold uppercase tracking-[0.2em] text-[#c5a880]">
-              Search Location
-            </label>
-            <div className="flex items-center gap-3 px-4 py-3 border border-slate-200/80 rounded-2xl bg-white shadow-sm transition-all focus-within:border-[#023526] focus-within:ring-4 focus-within:ring-[#023526]/5">
-              <SearchIco className="w-5 h-5 text-slate-400 shrink-0" />
-              <div className="flex-1 flex items-center gap-1.5 flex-wrap min-w-0">
-                {/* Mobile Badges */}
-                {propertyType !== 'All Residential' && (
-                  <div className="flex items-center gap-1 px-2.5 py-1 bg-[#023526]/5 border border-[#023526]/10 text-[#023526] rounded-xl text-[11px] font-bold whitespace-nowrap">
-                    {propertyType}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPropertyType('All Residential');
-                      }}
-                      className="opacity-60 hover:opacity-100 ml-1"
-                    >
-                      <CloseIco style={{ width: 10, height: 10 }} />
-                    </button>
-                  </div>
-                )}
-                {bhk.length > 0 &&
-                  bhk.map((b) => (
-                    <div
-                      key={b}
-                      className="flex items-center gap-1 px-2.5 py-1 bg-[#c5a880]/10 border border-[#c5a880]/20 text-[#c5a880] rounded-lg text-[11px] font-bold whitespace-nowrap"
-                    >
-                      {b} BHK
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleBhk(b);
-                        }}
-                        className="opacity-60 hover:opacity-100 ml-1"
-                      >
-                        <CloseIco style={{ width: 10, height: 10 }} />
-                      </button>
-                    </div>
-                  ))}
-                <input
-                  type="text"
-                  autoFocus
-                  placeholder={
-                    propertyType === 'All Residential' && bhk.length === 0
-                      ? 'City, locality, project…'
-                      : ''
-                  }
-                  value={displayValue}
-                  onChange={(e) => updateQuery(e.target.value)}
-                  onFocus={(e) => {
-                    // Pre-fill with location so user can edit it directly
-                    if (!query && location) setQuery(location);
-                    handleInputFocus(e);
-                  }}
-                  className="flex-1 border-none outline-none bg-transparent text-[14.5px] font-semibold text-slate-800 placeholder:text-slate-400 min-w-[100px]"
-                />
-              </div>
-              {displayValue && (
-                <button
-                  type="button"
-                  className="text-slate-400 p-1 flex items-center justify-center rounded-full hover:bg-slate-50 hover:text-red-500 transition-colors"
-                  onClick={() => {
-                    clearSuggestions();
-                    setQuery('');
-                    setLocation('');
-                    resetListingFilters();
-                  }}
-                >
-                  <CloseIco style={{ width: 13, height: 13 }} />
-                </button>
-              )}
-              <button
-                type="button"
-                className={`flex items-center justify-center w-8 h-8 rounded-full transition-all hover:bg-slate-50 hover:text-[#023526] text-slate-400 ${isGpsLoading ? 'animate-[spin_1s_linear_infinite]' : ''}`}
-                onClick={handleDetectLocation}
-                aria-label="Detect my location"
-              >
-                {isGpsLoading ? (
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-4 h-4"
-                  >
-                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                  </svg>
-                ) : (
-                  <GpsIco />
-                )}
-              </button>
-            </div>
-            {showDropdown && (
-              <div className="bg-white border border-slate-200/60 rounded-2xl p-4 shadow-[0_8px_30px_rgba(2,53,38,0.03)] mt-2">
-                <SuggestionDropdown
-                  suggestions={suggestions}
-                  defaultSuggestions={defaultSuggestions}
-                  recentSearches={recentSearches}
-                  cities={cities}
-                  popularCities={popularCities}
-                  query={query}
-                  onSelect={handleSelect}
-                  onRecent={handleRecentSelect}
-                  activeTab={activeTab}
-                  propertyType={propertyType}
-                  bhk={bhk}
-                  minBudget={minBudget}
-                  maxBudget={maxBudget}
-                  budgets={budgets}
-                  types={types}
-                  locStatus={locStatus}
-                  inline
-                  resolveCategoryParam={resolveCategoryParam}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex items-center gap-3.5 px-4 py-4 border-t border-slate-100 bg-white pb-[calc(18px+env(safe-area-inset-bottom,0px))] shadow-[0_-8px_30px_rgba(0,0,0,0.03)]">
-          <button
-            type="button"
-            className="px-6 h-12 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition active:scale-95"
-            onClick={() => resetAllFilters()}
-          >
-            Reset
-          </button>
-          <button
-            type="button"
-            className="flex-1 flex items-center justify-center gap-2 h-12 rounded-xl bg-gradient-to-r from-[#023526] to-[#011f16] hover:from-[#034432] hover:to-[#023526] text-white text-sm font-bold tracking-wider uppercase shadow-lg hover:shadow-[#023526]/12 transition active:scale-[0.98]"
-            onClick={handleSearch}
-          >
-            <SearchIco className="w-[18px] h-[18px]" />
-            <span>Search</span>
-          </button>
-        </div>
-      </div>,
-      document.body
-    );
+  const clearSearchField = () => {
+    clearSuggestions();
+    setQuery('');
+    setLocation('');
+    resetListingFilters();
+    setIsLocationFocused(false);
+  };
 
   // ── Desktop / Hero View ─────────────────────────────
   return (
     <>
-      {mobileModal}
-
       <div
         className={`relative z-[200] ${isNavbar
             ? 'w-full min-w-0 max-w-full'
@@ -613,41 +418,116 @@ export default function SearchBar({ isNavbar = false, variant = 'default' }) {
               : 'bg-transparent p-0 border-none shadow-none'
             }`}
         >
-          {/* Mobile Trigger */}
-          <button
-            className={`md:hidden w-full flex items-center gap-3 cursor-pointer min-w-0 ${isNavbar
-                ? 'h-[40px] px-3 gap-2.5 rounded-[10px] bg-[#f1f5f9] border border-[#e2e8f0]'
-                : isHeroVariant
-                  ? 'h-12 px-3.5 rounded-md border border-slate-200 bg-slate-50/90'
-                  : 'py-[14px] px-4 bg-white rounded-2xl border border-[#e2e8f0]'
-              }`}
-            onClick={() => {
-              if (window.innerWidth <= 768) setIsMobileOpen(true);
-            }}
-            aria-label="Open search"
-          >
-            <div
-              className={`flex items-center justify-center rounded-xl shrink-0 ${isNavbar
-                  ? 'w-7 h-7 bg-transparent text-[#94a3b8]'
-                  : 'w-10 h-10 bg-[#023526] text-white'
+          {/* Mobile — inline search (no full-screen modal, no default suggestion panel) */}
+          <div className="relative w-full min-w-0 md:hidden">
+            <form className="w-full" onSubmit={handleSearch}>
+              <div
+                className={`group flex w-full items-center gap-2.5 border bg-white transition-all duration-200 focus-within:border-primary/30 focus-within:shadow-[0_4px_20px_rgba(2,53,38,0.08)] focus-within:ring-[3px] focus-within:ring-primary/10 ${
+                  isNavbar
+                    ? 'h-10 rounded-[10px] border-slate-200/90 px-3 shadow-[0_1px_3px_rgba(15,23,42,0.06)]'
+                    : isHeroVariant
+                      ? 'h-[52px] rounded-2xl border-slate-200/80 px-4 shadow-[0_8px_28px_rgba(2,53,38,0.07)]'
+                      : 'h-12 rounded-2xl border-slate-200 px-4 shadow-sm'
                 }`}
-            >
-              <SearchIco className={isNavbar ? 'w-[18px] h-[18px]' : 'w-5 h-5'} />
-            </div>
-            <div className="flex-1 text-left min-w-0 flex flex-col">
-              <span
-                className={`block font-semibold text-[#1e293b] whitespace-nowrap overflow-hidden text-ellipsis leading-[1.2] ${isNavbar ? 'text-[0.85rem] text-[#64748b]' : 'text-base'}`}
               >
-                {displayValue ||
-                  (location ? `Search in ${location}...` : 'Search city, locality, project…')}
-              </span>
-              {!isNavbar && (
-                <span className="text-xs text-[#94a3b8] font-medium">
-                  {activeTab} · {propertyType} {bhk.length > 0 ? `· ${bhk.length} BHK` : ''}
+                <span
+                  className={`flex shrink-0 items-center justify-center rounded-lg bg-primary/5 text-primary transition-colors group-focus-within:bg-primary/10 ${
+                    isNavbar ? 'h-7 w-7' : 'h-9 w-9'
+                  }`}
+                  aria-hidden
+                >
+                  <SearchIco className={isNavbar ? 'h-4 w-4' : 'h-[18px] w-[18px]'} />
                 </span>
-              )}
-            </div>
-          </button>
+                <input
+                  type="search"
+                  inputMode="search"
+                  enterKeyHint="search"
+                  autoComplete="off"
+                  value={displayValue}
+                  placeholder={
+                    location ? `Search in ${location}…` : 'Search city, locality, project…'
+                  }
+                  onChange={(e) => updateQuery(e.target.value)}
+                  onFocus={() => {
+                    if (!query && location) setQuery(location);
+                    handleInputFocus();
+                  }}
+                  className={`min-w-0 flex-1 border-0 bg-transparent p-0 font-semibold text-slate-800 outline-none placeholder:font-medium placeholder:text-slate-400 [-webkit-appearance:none] [appearance:none] ${
+                    isNavbar ? 'text-[0.875rem]' : 'text-[0.9375rem]'
+                  }`}
+                  aria-label="Search properties"
+                />
+                {displayValue && (
+                  <button
+                    type="button"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+                    onClick={clearSearchField}
+                    aria-label="Clear search"
+                  >
+                    <CloseIco style={{ width: 14, height: 14 }} />
+                  </button>
+                )}
+                {!isNavbar && (
+                  <button
+                    type="button"
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-primary/5 hover:text-primary ${isGpsLoading ? 'animate-[spin_1s_linear_infinite]' : ''}`}
+                    onClick={handleDetectLocation}
+                    aria-label="Detect my location"
+                  >
+                    {isGpsLoading ? (
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-4 w-4"
+                      >
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                      </svg>
+                    ) : (
+                      <GpsIco />
+                    )}
+                  </button>
+                )}
+              </div>
+            </form>
+            {!isNavbar && (
+              <p className="mt-1.5 truncate px-1 text-xs font-medium text-slate-400">
+                {activeTab} · {propertyType}
+                {bhk.length > 0 ? ` · ${bhk.join(', ')} BHK` : ''}
+              </p>
+            )}
+            {showMobileQueryDropdown && (
+              <div
+                id="mobile-search-suggestions"
+                className="absolute left-0 right-0 top-[calc(100%+8px)] z-[1100] max-h-[min(320px,50vh)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
+              >
+                <SuggestionDropdown
+                  suggestions={suggestions}
+                  defaultSuggestions={defaultSuggestions}
+                  recentSearches={recentSearches}
+                  cities={cities}
+                  popularCities={popularCities}
+                  query={query}
+                  onSelect={handleSelect}
+                  onRecent={handleRecentSelect}
+                  activeTab={activeTab}
+                  propertyType={propertyType}
+                  bhk={bhk}
+                  minBudget={minBudget}
+                  maxBudget={maxBudget}
+                  budgets={budgets}
+                  types={types}
+                  locStatus={locStatus}
+                  inline
+                  queryOnly
+                  resolveCategoryParam={resolveCategoryParam}
+                />
+              </div>
+            )}
+          </div>
 
           {/* Desktop Form */}
           {!isNavbar && (
@@ -810,6 +690,7 @@ export default function SearchBar({ isNavbar = false, variant = 'default' }) {
 
         {isLocationFocused &&
           !isNavbar &&
+          !isMobileViewport &&
           dropdownRect &&
           ReactDOM.createPortal(
             <div
@@ -1043,6 +924,7 @@ function SuggestionDropdown({
   types,
   inline = false,
   portaled = false,
+  queryOnly = false,
   locStatus = 'idle',
   handleSearch,
   resolveCategoryParam,
@@ -1050,7 +932,7 @@ function SuggestionDropdown({
   const { setPropertyType, setPropertyCategory, toggleBhk, setMinBudget, setMaxBudget } =
     useSearch();
 
-  const isInitial = !query;
+  const isInitial = !queryOnly && !query;
 
   // Map dynamic popular cities for display
   const popularCitiesDisplay =

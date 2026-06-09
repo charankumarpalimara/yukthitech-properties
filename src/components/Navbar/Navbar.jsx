@@ -16,7 +16,6 @@ import {
   LocIco,
   IconFlats,
   SearchIco,
-  BuyIcon,
   DashboardIcon,
   GpsIco,
   LogoIcon,
@@ -31,7 +30,6 @@ import {
 import { requestNotificationPermission, removeFcmToken } from '../../service/firebaseNotifications';
 import { API_URL } from '../../service/api';
 import { BellIco } from '../../data/icons';
-import { isSellerUserType } from '../../utils/isSellerUserType';
 import { preloadUserPanelPage } from '../../utils/preloadRoutes';
 import {
   buildAutocompleteFetchParams,
@@ -46,6 +44,7 @@ import {
   rankLocationSuggestions,
 } from '../../utils/locationDisplay';
 import { useSearchStore } from '../../store/searchStore';
+import { isSellerUserType } from '../../utils/isSellerUserType';
 import {
   HOME_EYEBROW,
   HOME_SECTION_TITLE,
@@ -82,6 +81,18 @@ const formatLocationFullName = (city) => {
   if (!raw) return 'India';
   return formatLocationString(raw);
 };
+
+function PostPropertyPlanTag({ isSeller }) {
+  return (
+    <span
+      className={`rounded px-1.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide leading-none ${
+        isSeller ? 'bg-gold text-slate-900' : 'bg-white/20 text-white'
+      }`}
+    >
+      {isSeller ? 'Pro' : 'Free'}
+    </span>
+  );
+}
 
 const getLocationRowLabels = (city) => {
   const full = formatLocationFullName(city);
@@ -238,6 +249,8 @@ export default function Navbar() {
     avatar: userFromStore?.avatar || '',
     type: userFromStore?.type || '',
   };
+
+  const isSeller = isAuthenticated && isSellerUserType(userDetails.type);
 
   // Resolve a lat/lng bias point for location search (not used for popular cities list)
   useEffect(() => {
@@ -947,20 +960,13 @@ export default function Navbar() {
           {/* Right Actions */}
           <div className="hidden md:flex flex-none items-center justify-end gap-[10px]">
             <Link
-              to="/properties"
-              className={`flex items-center gap-[6px] px-[14px] py-[7px] bg-primary text-white font-semibold text-[0.82rem] rounded-sm transition-all duration-200 hover:bg-primary-dark hover:-translate-y-px whitespace-nowrap no-underline ${isScrolled ? 'hidden' : ''}`}
+              to="/subscription"
+              className="flex items-center gap-2 px-[14px] py-[7px] bg-primary text-white font-semibold text-[0.82rem] rounded-sm transition-all duration-200 hover:bg-primary-dark hover:-translate-y-px whitespace-nowrap no-underline"
               onClick={() => setIsMenuOpen(false)}
             >
-              <BuyIcon /> Buy Properties
+              Post Your Property
+              <PostPropertyPlanTag isSeller={isSeller} />
             </Link>
-            {isAuthenticated && !isSellerUserType(userDetails?.type) && (
-              <Link
-              to="/subscription"
-              className="flex items-center gap-[6px] px-[14px] py-[7px] bg-primary text-white font-semibold text-[0.82rem] transition-all duration-200 hover:bg-primary-dark hover:-translate-y-px whitespace-nowrap no-underline"
-            >
-              Post Property
-            </Link>
-            )}
 
             {isAuthenticated && (
               <div className="relative" ref={notificationRef}>
@@ -1257,14 +1263,14 @@ export default function Navbar() {
               </div>
               <Link
                 to="/profile"
-                className="flex items-center justify-center gap-2 p-2.5 px-4 border-[1.5px] border-slate-200 rounded-lg text-[0.88rem] font-medium text-slate-600 bg-white font-sans transition-colors hover:border-primary hover:text-primary-dark w-full"
+                className="flex items-center justify-center gap-2 p-2.5 px-4 border-[1.5px] border-slate-200 rounded-sm text-[0.88rem] font-medium text-slate-600 bg-white font-sans transition-colors hover:border-primary hover:text-primary-dark w-full"
                 onMouseEnter={preloadUserPanelPage}
                 onClick={() => setIsMenuOpen(false)}
               >
                 View Profile
               </Link>
               <button
-                className="flex items-center justify-center gap-2 p-2.5 px-4 border-[1.5px] border-slate-200 rounded-lg text-[0.88rem] font-medium text-slate-600 bg-white font-sans transition-colors hover:border-primary hover:text-primary-dark w-full"
+                className="flex items-center justify-center gap-2 p-2.5 px-4 border-[1.5px] border-slate-200 rounded-sm text-[0.88rem] font-medium text-slate-600 bg-white font-sans transition-colors hover:border-primary hover:text-primary-dark w-full"
                 onClick={handleLogout}
               >
                 Logout
@@ -1283,21 +1289,13 @@ export default function Navbar() {
           )}
 
           <Link
-            to="/properties"
+            to="/subscription"
             className="flex items-center justify-center gap-2 p-2.5 px-4 bg-primary text-white rounded-sm text-[0.88rem] font-semibold font-sans transition-colors hover:bg-primary-dark border-none w-full mt-2"
             onClick={() => setIsMenuOpen(false)}
           >
-            <BuyIcon /> Buy Properties
+            Post Your Property
+            <PostPropertyPlanTag isSeller={isSeller} />
           </Link>
-          {isAuthenticated && !isSellerUserType(userDetails?.type) && (
-            <Link
-            to="/subscription"
-            className="flex items-center justify-center gap-2 p-2.5 px-4 bg-primary text-white rounded-sm text-[0.88rem] font-semibold font-sans transition-colors hover:bg-primary-dark border-none w-full"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Post Property
-          </Link>
-          )}
         </div>
       </div>
       {isMenuOpen && (

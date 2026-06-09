@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense } from 'react';
+import React, { useEffect, useRef, lazy, Suspense } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthStore, logout, getMe } from '../store/authStore';
 import { usePropertiesStore } from '../store/propertiesStore';
@@ -33,14 +33,16 @@ const PropertyDraft = lazy(() => import('../components/UserPanel/pages/propertie
 import {
   upBtnLogin,
   upMobileHeaderAvatar,
+  upMobileTabScroller,
   upMobileTabContainer,
+  upMobileTabButton,
   upMobileTabActive,
   upMobileTabInactive,
   upMobileTabIconActive,
   upMobileTabIconInactive,
+  upMobileTabLabel,
   upMobileTabBadgeActive,
   upMobileTabBadgeInactive,
-  upMobileTabIndicator,
   upSidebarContainer,
   upSidebarAvatar,
   upSidebarItemActive,
@@ -162,25 +164,40 @@ export default function UserPanel() {
   const isSeller = isSellerUserType(user?.type);
 
   const userTabs = [
-    { key: 'profile', label: 'My Profile', icon: <IconUser /> },
-    { key: 'favourites', label: 'Favourites', icon: <IconHeart /> },
-    { key: 'notifications', label: 'Notifications', icon: <IconBell /> },
-    ...(isSeller ? [
-      { key: 'dashboard', label: 'Dashboard', icon: <IconDashboard /> },
-      { key: 'properties', label: 'My Properties', icon: <IconProperties /> },
-      { key: 'create-property', label: 'Post Property', icon: <IconAdd /> },
-      { key: 'subscriptions', label: 'Subscription Plans', icon: <IconSubscription /> },
-      // { key: 'banner-subscriptions', label: 'Banner Ads', icon: <IconBanners /> },
-      { key: 'transactions', label: 'Transactions', icon: <IconTransactions /> },
-      { key: 'support', label: 'Support', icon: <IconSupport /> },
-    ] : [])
+    { key: 'profile', label: 'My Profile', shortLabel: 'Profile', icon: <IconUser /> },
+    { key: 'favourites', label: 'Favourites', shortLabel: 'Saved', icon: <IconHeart /> },
+    { key: 'notifications', label: 'Notifications', shortLabel: 'Alerts', icon: <IconBell /> },
+    ...(isSeller
+      ? [
+          { key: 'dashboard', label: 'Dashboard', shortLabel: 'Dashboard', icon: <IconDashboard /> },
+          { key: 'properties', label: 'My Properties', shortLabel: 'Listings', icon: <IconProperties /> },
+          { key: 'create-property', label: 'Post Property', shortLabel: 'Post', icon: <IconAdd /> },
+          {
+            key: 'subscriptions',
+            label: 'Subscription Plans',
+            shortLabel: 'Plans',
+            icon: <IconSubscription />,
+          },
+          { key: 'transactions', label: 'Transactions', shortLabel: 'Billing', icon: <IconTransactions /> },
+          { key: 'support', label: 'Support', shortLabel: 'Help', icon: <IconSupport /> },
+        ]
+      : []),
   ];
+
+  const mobileTabsRef = useRef(null);
+  const tabButtonRefs = useRef({});
 
   useEffect(() => {
     if (!user?._id && !user?.id) {
       getMe();
     }
   }, [user?._id, user?.id]);
+
+  useEffect(() => {
+    const activeTabEl = tabButtonRefs.current[tabName];
+    if (!activeTabEl || !mobileTabsRef.current) return;
+    activeTabEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, [tabName]);
 
   if (!isLoggedIn) {
     return (
@@ -251,63 +268,75 @@ export default function UserPanel() {
   };
 
   return (
-    <div className="bg-[#f8fafc] min-h-[calc(100vh-72px)] py-4 lg:py-6 pb-6 font-sans antialiased">
-      <div className="max-w-[1400px] mx-auto px-4 lg:px-6">
+    <div className="min-h-[calc(100vh-var(--navbar-height,72px))] overflow-x-hidden bg-[#f8fafc] py-3 font-sans antialiased sm:py-4 lg:py-6 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+      <div className="mx-auto max-w-[1400px] px-3 sm:px-4 lg:px-6">
         {/* ── MOBILE HEADER & TABS ── */}
-        <div className="lg:hidden mb-8">
-          <div className="flex items-center gap-4 mb-6 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="mb-4 lg:hidden">
+          <div className="mb-3 flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3.5 shadow-sm">
             <div className={upMobileHeaderAvatar}>
               {user?.avatar ? (
-                <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                <img src={user.avatar} alt="Profile" className="h-full w-full object-cover" />
               ) : (
-                <span className="text-2xl">👤</span>
+                <span className="text-xl">👤</span>
               )}
             </div>
-            <div className="min-w-0">
-              <h2 className="text-[1.15rem] font-semibold text-slate-900 truncate m-0">
+            <div className="min-w-0 flex-1">
+              <h2 className="m-0 truncate text-base font-semibold text-slate-900">
                 {user?.name || user?.firstName || user?.username || 'User'}
               </h2>
-              <p className="text-[0.82rem] text-slate-500 truncate m-0 opacity-80 uppercase tracking-widest font-medium">
+              <p className="m-0 truncate text-[0.75rem] font-medium uppercase tracking-wider text-slate-500">
                 {isSeller ? 'Seller Account' : 'Personal Account'}
               </p>
             </div>
             <button
+              type="button"
               onClick={handleLogout}
-              className="ml-auto w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-100 active:scale-95 transition-all"
+              className="ml-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-rose-100 bg-rose-50 text-rose-500 transition-all active:scale-95"
+              aria-label="Logout"
             >
               <IconLogout />
             </button>
           </div>
 
-          <div className={upMobileTabContainer}>
-            {userTabs.map((t) => (
-              <button
-                key={t.key}
-                onClick={() => navigate(`/profile/${t.key}`)}
-                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-[0.88rem] font-semibold transition-all duration-300 shrink-0 whitespace-nowrap flex-1 justify-center relative
-                  ${tabName === t.key ? upMobileTabActive : upMobileTabInactive}`}
-              >
-                <span className={`transition-transform duration-300 ${tabName === t.key ? upMobileTabIconActive : upMobileTabIconInactive}`}>
-                  {t.icon}
-                </span>
-                <span>{t.label}</span>
-                {t.key === 'favourites' && wishlist.length > 0 && (
-                  <span
-                    className={`text-[0.62rem] px-1.5 py-0.5 rounded-full font-bold ml-1.5 transition-all
-                      ${tabName === t.key ? upMobileTabBadgeActive : upMobileTabBadgeInactive}`}
+          <div className={upMobileTabScroller} ref={mobileTabsRef}>
+            <div className={upMobileTabContainer} role="tablist" aria-label="Account sections">
+              {userTabs.map((t) => {
+                const isActive = tabName === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    ref={(el) => {
+                      tabButtonRefs.current[t.key] = el;
+                    }}
+                    onClick={() => navigate(`/profile/${t.key}`)}
+                    className={`${upMobileTabButton} ${isActive ? upMobileTabActive : upMobileTabInactive}`}
                   >
-                    {wishlist.length}
-                  </span>
-                )}
-                {tabName === t.key && (
-                  <span className={upMobileTabIndicator} />
-                )}
-              </button>
-            ))}
+                    <span
+                      className={`relative transition-colors duration-200 ${isActive ? upMobileTabIconActive : upMobileTabIconInactive}`}
+                    >
+                      {t.icon}
+                      {t.key === 'favourites' && wishlist.length > 0 && (
+                        <span
+                          className={`absolute -right-2 -top-2 min-w-[1rem] rounded-full px-1 py-0.5 text-[0.55rem] font-bold leading-none ${
+                            isActive ? upMobileTabBadgeActive : upMobileTabBadgeInactive
+                          }`}
+                        >
+                          {wishlist.length}
+                        </span>
+                      )}
+                    </span>
+                    <span className={upMobileTabLabel}>{t.shortLabel}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-5 items-start">
+        <div className="grid grid-cols-1 items-start gap-4 sm:gap-5 lg:grid-cols-[240px_1fr]">
           {/* ── SIDEBAR ── */}
           <aside className={upSidebarContainer}>
             <div className="bg-[#fcfcfd] p-[32px_20px_24px] text-center relative border-b border-slate-100/80">
@@ -363,7 +392,7 @@ export default function UserPanel() {
           </aside>
 
           {/* ── MAIN ── */}
-          <main className="min-w-0 vendor-panel">{renderPanel()}</main>
+          <main className="vendor-panel min-w-0 w-full overflow-x-hidden">{renderPanel()}</main>
         </div>
       </div>
     </div>

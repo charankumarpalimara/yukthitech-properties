@@ -116,7 +116,7 @@ export default function FavouritesPanel() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
           {wishlistItems.map((item) => {
             const property = item.propertyId;
             if (!property) return null;
@@ -128,10 +128,10 @@ export default function FavouritesPanel() {
               <div
                 key={property._id}
                 onClick={() => navigate(`/property/${property._id}`)}
-                className="group bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-slate-200 transition-all duration-300 cursor-pointer flex flex-col"
+                className="group flex cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:border-slate-200 hover:shadow-xl sm:rounded-2xl"
               >
                 {/* ── Image ── */}
-                <div className="relative h-44 overflow-hidden bg-slate-100 shrink-0">
+                <div className="relative h-28 shrink-0 overflow-hidden bg-slate-100 sm:h-44">
                   <img
                     src={property.media?.poster || 'https://via.placeholder.com/400x300?text=No+Image'}
                     alt={property.projectName}
@@ -142,14 +142,14 @@ export default function FavouritesPanel() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
                   {/* top badges */}
-                  <div className="absolute top-3 left-3 flex gap-1.5 flex-wrap">
+                  <div className="absolute left-2 top-2 flex flex-wrap gap-1 sm:left-3 sm:top-3 sm:gap-1.5">
                     {propertyType && (
-                      <span className="px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-sm text-[10px] font-bold text-slate-700 uppercase tracking-wide shadow-sm">
+                      <span className="rounded-md bg-white/90 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide text-slate-700 shadow-sm backdrop-blur-sm sm:px-2 sm:text-[10px]">
                         {propertyType}
                       </span>
                     )}
                     {status && (
-                      <span className="px-2 py-0.5 rounded-md bg-primary/90 backdrop-blur-sm text-[10px] font-bold text-white uppercase tracking-wide shadow-sm">
+                      <span className="rounded-md bg-primary/90 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide text-white shadow-sm backdrop-blur-sm sm:px-2 sm:text-[10px]">
                         {status}
                       </span>
                     )}
@@ -159,41 +159,43 @@ export default function FavouritesPanel() {
                   <button
                     onClick={(e) => handleRemove(e, property._id)}
                     aria-label="Remove from favourites"
-                    className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center text-rose-500 shadow-sm hover:bg-rose-500 hover:text-white transition-all duration-200 z-10"
+                    className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-lg bg-white/90 text-rose-500 shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-rose-500 hover:text-white sm:right-3 sm:top-3 sm:h-8 sm:w-8 sm:rounded-xl"
                   >
                     <IconHeart />
                   </button>
                 </div>
 
                 {/* ── Body ── */}
-                <div className="p-4 flex-1 flex flex-col gap-2">
+                <div className="flex flex-1 flex-col gap-1.5 p-2.5 sm:gap-2 sm:p-4">
                   {/* title */}
-                  <h4 className="text-[0.92rem] font-bold text-slate-900 leading-snug line-clamp-1 group-hover:text-primary transition-colors duration-200">
+                  <h4 className="line-clamp-2 text-[0.72rem] font-bold leading-snug text-slate-900 transition-colors duration-200 group-hover:text-primary sm:line-clamp-1 sm:text-[0.92rem]">
                     {toStr(property.projectName, 'Unnamed Property')}
                   </h4>
 
                   {/* location */}
-                  <div className="flex items-center gap-1.5 text-slate-400 text-[0.72rem] font-medium">
-                    <span className="text-slate-300"><IconPin /></span>
+                  <div className="flex items-center gap-1 text-[0.62rem] font-medium text-slate-400 sm:gap-1.5 sm:text-[0.72rem]">
+                    <span className="shrink-0 text-slate-300">
+                      <IconPin />
+                    </span>
                     <span className="truncate">
                       {toStr(property.address?.locality) || toStr(property.address?.city) || 'Hyderabad'}
                     </span>
                   </div>
 
                   {/* divider */}
-                  <div className="h-px bg-slate-100 mt-auto mb-0" />
+                  <div className="mb-0 mt-auto h-px bg-slate-100" />
 
                   {/* price + arrow */}
-                  <div className="flex items-center justify-between pt-1">
-                    <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">
+                  <div className="flex items-center justify-between gap-1 pt-1">
+                    <div className="min-w-0">
+                      <p className="mb-0.5 text-[8px] font-bold uppercase leading-none tracking-widest text-slate-400 sm:mb-1 sm:text-[10px]">
                         Price
                       </p>
-                      <p className="text-[1.05rem] font-extrabold text-slate-900 leading-none tabular-nums">
+                      <p className="truncate text-[0.82rem] font-extrabold leading-none tabular-nums text-slate-900 sm:text-[1.05rem]">
                         {formatPrice(property.financials?.totalPrice)}
                       </p>
                     </div>
-                    <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all duration-300 shrink-0">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-slate-100 bg-slate-50 text-slate-400 transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-white sm:h-9 sm:w-9 sm:rounded-xl">
                       <IconArrow />
                     </div>
                   </div>

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { useAuthStore } from '../../store/authStore';
 import { useSearch } from '../../context/SearchContext';
 import {
   FOOTER_LINKS,
@@ -11,11 +10,9 @@ import {
   CITIES,
 } from '../../data/constants';
 import { formatCityName } from '../../utils/formatCityName';
-import { isSellerUserType } from '../../utils/isSellerUserType';
 import { FOOTER_SOCIAL_ICON_MAP, LogoIcon } from '../../data/icons';
 import { API_URL } from '../../service/api';
 import {
-  ArrowRight,
   ShieldCheck,
   Building2,
   Send,
@@ -237,9 +234,6 @@ function SocialBtn({ id, label, href }) {
 }
 
 export default function Footer() {
-  const user = useAuthStore((s) => s.user);
-  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
-  const isSeller = isLoggedIn && isSellerUserType(user?.type);
   const [config, setConfig] = useState(null);
 
   const { popularCities, cities: allCities } = useSearch();
@@ -288,26 +282,19 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl bg-[#023526] px-6 py-4 shadow-[0_8px_24px_rgba(2,53,38,0.15)]">
           <div className="text-center sm:text-left">
             <p className="m-0 text-[15px] font-bold text-white leading-snug">
-              {isSeller ? 'Grow your real estate business with us' : 'Find & list properties with ease'}
+              List your property and reach verified buyers
             </p>
             <p className="m-0 text-[12px] text-white/55 mt-0.5">
-              {isSeller ? 'Manage listings, track leads — all in one place.' : 'Verified homes, plots & commercial spaces across India.'}
+              Post your home, plot, or commercial space — it&apos;s free to get started.
             </p>
           </div>
-          <div className="flex gap-2.5 shrink-0">
+          <div className="shrink-0">
             <Link
               to="/subscription"
               className="inline-flex items-center gap-1.5 rounded-lg bg-[#c5a880] px-4 py-2 text-[12.5px] font-bold text-slate-900 no-underline hover:bg-[#d4b892] transition-colors whitespace-nowrap"
             >
-              <Crown size={13} strokeWidth={2.5} />
-              {isSeller ? 'Seller Plans' : 'List Property'}
-            </Link>
-            <Link
-              to="/properties"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-white/25 px-4 py-2 text-[12.5px] font-semibold text-white no-underline hover:bg-white/10 transition-colors whitespace-nowrap"
-            >
-              Browse
-              <ArrowRight size={13} strokeWidth={2.5} />
+              <Building2 size={13} strokeWidth={2.5} />
+              Post Your Property Free
             </Link>
           </div>
         </div>
