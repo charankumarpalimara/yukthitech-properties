@@ -1,10 +1,10 @@
-export const API_URL =
-  import.meta.env.VITE_API_URL || 'https://api.sherlaproperties.com/api/website';
-export const VENDORAPI_URL =
-  import.meta.env.VITE_VENDOR_API_URL || 'https://api.sherlaproperties.com/api/vendor';
+// export const API_URL =
+//   import.meta.env.VITE_API_URL || 'https://api.yukthiproperties.com/api/website';
+// export const VENDORAPI_URL =
+//   import.meta.env.VITE_VENDOR_API_URL || 'https://api.yukthiproperties.com/api/vendor';
 
-//  export const API_URL = import.meta.env.VITE_API_URL || 'http://192.168.0.117:9000/api/website';
-//export const VENDORAPI_URL = import.meta.env.VITE_VENDOR_API_URL || 'http://192.168.0.117:9000/api/vendor';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/website';
+export const VENDORAPI_URL = import.meta.env.VITE_VENDOR_API_URL || 'http://localhost:5001/api/vendor';
 
 /**
  * Global API Client for all requests
@@ -41,12 +41,20 @@ export const apiClient = async (url, options = {}) => {
   const timeoutMs = options.timeoutMs ?? 30000;
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
+  if (options.signal) {
+    if (options.signal.aborted) {
+      controller.abort();
+    } else {
+      options.signal.addEventListener('abort', () => controller.abort(), { once: true });
+    }
+  }
+
   try {
     const response = await fetch(url, {
       ...options,
       headers,
       body,
-      signal: options.signal ?? controller.signal,
+      signal: controller.signal,
     });
     return response;
   } finally {

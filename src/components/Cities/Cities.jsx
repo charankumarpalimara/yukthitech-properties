@@ -1,21 +1,32 @@
-import { useState, useMemo, useEffect, startTransition, useCallback } from 'react';
+import { useState, useMemo, useEffect, useRef, startTransition, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cityPagePath, preloadCityPage } from '../../utils/preloadRoutes';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
-import { CloseIco, SearchIco } from '../../data/icons';
+import { CloseIco, SearchIco, ChevronL, ChevronR } from '../../data/icons';
+import { useMaxWidth } from '../../hooks/useMediaQuery';
+import { bindSwiperNavigation } from '../../utils/bindSwiperNavigation';
 import { resolveCityCardImage } from '../../utils/imageSizes';
 import HomeSectionHeader from '../HomeScreen/HomeSectionHeader';
+import {
+  HOME_CAROUSEL_NAV_OVERLAY_PREV,
+  HOME_CAROUSEL_NAV_OVERLAY_NEXT,
+} from '../HomeScreen/homeTypographyStyles';
 import { formatCityName } from '../../utils/formatCityName';
 import { CITIES } from '../../data/constants';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
+const PREV_CLASS = 'city-prev-btn';
+const NEXT_CLASS = 'city-next-btn';
+
 export default function Cities({ isSidebarOpen, popularCities }) {
   const cities = popularCities || CITIES || [];
   const navigate = useNavigate();
+  const swiperRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const isBelowLg = useMaxWidth(1023);
 
   const goToCity = useCallback(
     (name) => {
@@ -35,6 +46,12 @@ export default function Cities({ isSidebarOpen, popularCities }) {
     };
   }, [isModalOpen]);
 
+  useEffect(() => {
+    const swiper = swiperRef.current;
+    if (!swiper) return;
+    bindSwiperNavigation(swiper, `.${PREV_CLASS}`, `.${NEXT_CLASS}`);
+  }, [isBelowLg]);
+
   const filteredCities = useMemo(
     () => cities.filter((city) => city.name.toLowerCase().includes(searchQuery.toLowerCase())),
     [cities, searchQuery]
@@ -50,34 +67,56 @@ export default function Cities({ isSidebarOpen, popularCities }) {
         subtitle="Discover homes, plots & commercial spaces across India's top cities"
         viewAllLabel="View all cities"
         showNav
-        prevClass="city-prev-btn"
-        nextClass="city-next-btn"
+        navLayout="split"
+        prevClass={PREV_CLASS}
+        nextClass={NEXT_CLASS}
         onViewAllClick={() => setIsModalOpen(true)}
       />
 
-      <div className="home-feed__carousel">
+      <div className="home-feed__carousel relative">
+        {isBelowLg && (
+          <>
+            <button
+              type="button"
+              className={`${PREV_CLASS} ${HOME_CAROUSEL_NAV_OVERLAY_PREV}`}
+              aria-label="Previous"
+            >
+              <ChevronL className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+            </button>
+            <button
+              type="button"
+              className={`${NEXT_CLASS} ${HOME_CAROUSEL_NAV_OVERLAY_NEXT}`}
+              aria-label="Next"
+            >
+              <ChevronR className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+            </button>
+          </>
+        )}
         <Swiper
-          key={isSidebarOpen ? 'open' : 'close'}
+          key={`${isSidebarOpen ? 'open' : 'close'}-${isBelowLg ? 'm' : 'd'}`}
           modules={[Navigation]}
-          spaceBetween={14}
-          slidesPerView={2.2}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+            bindSwiperNavigation(swiper, `.${PREV_CLASS}`, `.${NEXT_CLASS}`);
+          }}
+          spaceBetween={3}
+          slidesPerView={3.4}
           navigation={{
-            prevEl: '.city-prev-btn',
-            nextEl: '.city-next-btn',
+            prevEl: `.${PREV_CLASS}`,
+            nextEl: `.${NEXT_CLASS}`,
           }}
           breakpoints={{
-            480: { slidesPerView: 2.8, spaceBetween: 14 },
-            768: { slidesPerView: 3.5, spaceBetween: 16 },
-            1024: { slidesPerView: 4.2, spaceBetween: 18 },
-            1280: { slidesPerView: 5, spaceBetween: 20 },
+            480: { slidesPerView: 4.2, spaceBetween: 14 },
+            768: { slidesPerView: 5.5, spaceBetween: 16 },
+            1024: { slidesPerView: 6.5, spaceBetween: 18 },
+            1280: { slidesPerView: 7.5, spaceBetween: 20 },
           }}
           className="!overflow-hidden"
         >
           {cities.map((city) => (
-            <SwiperSlide key={city.name}>
-              {/* ── Unified card ── */}
+            <SwiperSlide key={city.name} className="!h-auto">
               <div
-                className="group cursor-pointer rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(2,53,38,0.12)] hover:border-[#023526]/20"
+                className="group flex cursor-pointer flex-col items-center px-1 pb-2 pt-1 transition-transform duration-300 hover:-translate-y-1"
                 onMouseEnter={preloadCityPage}
                 onClick={() => goToCity(city.name)}
                 onKeyDown={(e) => e.key === 'Enter' && goToCity(city.name)}
@@ -85,40 +124,30 @@ export default function Cities({ isSidebarOpen, popularCities }) {
                 tabIndex={0}
                 aria-label={`Explore properties in ${formatCityName(city.name)}`}
               >
-                {/* image */}
-                <div className="relative h-[150px] overflow-hidden bg-slate-100">
-                  <img
-                    src={resolveCityCardImage(city.image, 480)}
-                    alt={city.name}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-transparent" />
-                  <span className="absolute top-2.5 right-2.5 inline-flex items-center rounded-full bg-black/50 backdrop-blur-sm px-2.5 py-1 text-[10px] font-bold text-white">
+                <div className="relative mx-auto aspect-square w-full max-w-[5.5rem] sm:max-w-[6.25rem] md:max-w-[7rem] lg:max-w-[7.75rem]">
+                  <div className="h-full w-full overflow-hidden rounded-full border-[3px] border-white bg-slate-100 shadow-[0_8px_24px_rgba(15,23,42,0.1)] ring-2 ring-slate-100 transition-all duration-300 group-hover:border-primary/20 group-hover:ring-primary/25 group-hover:shadow-[0_12px_28px_rgba(2,53,38,0.18)]">
+                    <img
+                      src={resolveCityCardImage(city.image, 320)}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-t from-black/45 via-black/5 to-transparent" />
+                  </div>
+                  <span className="absolute bottom-1 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/95 px-2 py-0.5 text-[9px] font-bold text-primary shadow-sm backdrop-blur-sm sm:text-[10px]">
                     {city.propertyCount ?? '—'} listings
                   </span>
                 </div>
 
-                {/* body */}
-                <div className="flex items-center justify-between px-3.5 py-3">
-                  <div>
-                    <p className="m-0 text-[14.5px] font-bold text-slate-900 leading-tight">
-                      {formatCityName(city.name)}
-                    </p>
-                    <p className="m-0 text-[11px] text-slate-400 font-medium mt-0.5">
-                      {city.propertyCount ? `${city.propertyCount} properties available` : 'Properties available'}
-                    </p>
-                  </div>
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-100 text-slate-400 transition-all duration-200 group-hover:bg-[#023526] group-hover:border-[#023526] group-hover:text-white">
-                    <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </div>
+                <div className="mt-3 w-full text-center">
+                  <p className="m-0 truncate text-[13px] font-bold leading-tight text-slate-900 transition-colors group-hover:text-primary sm:text-sm">
+                    {formatCityName(city.name)}
+                  </p>
+                  <p className="m-0 mt-1 truncate text-[10px] font-medium text-slate-400 sm:text-[11px]">
+                    {city.propertyCount ? `${city.propertyCount} properties` : 'Explore properties'}
+                  </p>
                 </div>
-
-                {/* animated bottom accent */}
-                <div className="h-[3px] w-0 bg-gradient-to-r from-[#c5a880] to-[#023526] transition-all duration-300 group-hover:w-full" />
               </div>
             </SwiperSlide>
           ))}
@@ -185,32 +214,30 @@ export default function Cities({ isSidebarOpen, popularCities }) {
             {/* grid */}
             <div className="flex-1 overflow-y-auto px-6 py-5 sm:px-8">
               {filteredCities.length > 0 ? (
-                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5">
                   {filteredCities.map((city) => (
                     <button
                       key={city.name}
                       type="button"
-                      className="flex items-center gap-3 rounded-xl border border-slate-100 p-2.5 text-left transition-all hover:border-[#023526]/30 hover:bg-[#023526]/4 group"
+                      className="group flex flex-col items-center rounded-2xl border border-transparent p-2 text-center transition-all hover:border-primary/15 hover:bg-primary/5"
                       onMouseEnter={preloadCityPage}
                       onClick={() => goToCity(city.name)}
                     >
-                      <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-slate-100">
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-white bg-slate-100 shadow-md ring-2 ring-slate-100 transition-all group-hover:ring-primary/25 sm:h-[4.5rem] sm:w-[4.5rem]">
                         <img
-                          src={resolveCityCardImage(city.image, 88)}
+                          src={resolveCityCardImage(city.image, 120)}
                           alt=""
                           loading="lazy"
                           decoding="async"
-                          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                         />
                       </div>
-                      <div className="min-w-0">
-                        <p className="m-0 truncate text-sm font-semibold text-slate-900 group-hover:text-[#023526] transition-colors">
-                          {formatCityName(city.name)}
-                        </p>
-                        <p className="m-0 text-[11px] font-medium text-slate-400">
-                          {city.propertyCount ?? '—'} listings
-                        </p>
-                      </div>
+                      <p className="m-0 mt-2 w-full truncate text-xs font-semibold text-slate-900 transition-colors group-hover:text-primary sm:text-sm">
+                        {formatCityName(city.name)}
+                      </p>
+                      <p className="m-0 mt-0.5 text-[10px] font-medium text-slate-400">
+                        {city.propertyCount ?? '—'} listings
+                      </p>
                     </button>
                   ))}
                 </div>

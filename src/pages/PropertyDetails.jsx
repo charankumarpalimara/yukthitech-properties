@@ -659,7 +659,7 @@ export default function PropertyDetails() {
         });
 
         const infowindow = new window.google.maps.InfoWindow({
-          content: `<div style="font-family: 'Outfit', sans-serif; color: #0f172a; padding: 2px;"><strong>${property.title}</strong></div>`,
+          content: `<div style="font-family: 'DM Sans', system-ui, sans-serif; color: #0f172a; padding: 2px;"><strong>${property.title}</strong></div>`,
         });
 
         marker.addListener('click', () => {
@@ -683,7 +683,7 @@ export default function PropertyDetails() {
               });
 
               const advInfoWindow = new window.google.maps.InfoWindow({
-                content: `<div style="font-family: 'Outfit', sans-serif; color: #0f172a; padding: 2px;"><strong>${adv.name}</strong></div>`,
+                content: `<div style="font-family: 'DM Sans', system-ui, sans-serif; color: #0f172a; padding: 2px;"><strong>${adv.name}</strong></div>`,
               });
 
               advMarker.addListener('click', () => {
@@ -1674,29 +1674,6 @@ export default function PropertyDetails() {
                   )}
                 </div>
               )}
-            </div>
-
-            {/* CTAs */}
-            <div className="flex gap-2 pt-2.5 border-t border-slate-100 mt-4 lg:mt-0">
-              <button
-                type="button"
-                className="flex-1 bg-primary text-white border-none py-2.5 rounded-sm font-semibold text-sm flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-sm"
-                onClick={handleScheduleSiteVisit}
-              >
-                Add Site Visit
-              </button>
-              <button
-                className={`px-3 py-2.5 rounded-sm border border-slate-200 bg-white flex items-center justify-center gap-1.5 font-semibold text-sm cursor-pointer transition-all hover:border-primary hover:text-primary active:scale-95 ${isWished ? 'bg-gold-50 border-primary text-primary' : 'text-slate-600'}`}
-                onClick={handleWishlist}
-                aria-label={isWished ? 'Remove from favourites' : 'Add to favourites'}
-                aria-pressed={isWished}
-              >
-                <Heart
-                  size={16}
-                  strokeWidth={2.25}
-                  className={`shrink-0 transition-all ${isWished ? 'fill-rose-500 text-rose-500' : 'text-slate-500'} ${pulsing ? 'animate-heart-pulse scale-110' : ''}`}
-                />
-              </button>
             </div>
           </div>
         </div>

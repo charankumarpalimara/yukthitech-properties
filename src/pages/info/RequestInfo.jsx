@@ -5,7 +5,7 @@ import { MapPin, Info, User, Phone, Send, FileText } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import {
   InfoPageBody,
-  InfoSectionTitle,
+  InfoLead,
   InfoText,
   InfoForm,
   InfoFormRow,
@@ -14,6 +14,8 @@ import {
   InfoTextarea,
   InfoSubmit,
   InfoSelect,
+  InfoAlert,
+  InfoLink,
 } from '../../components/InfoLayout/InfoPageUi';
 
 const toastStyle = { background: '#0f172a', color: '#ffffff', borderRadius: '12px' };
@@ -23,76 +25,80 @@ export default function RequestInfo() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    toast.success(
-      'Request submitted! One of our property consultants will reach out to you within 24 hours.',
-      {
-        style: toastStyle,
-      }
-    );
+    toast.success('Request submitted. A consultant will reach out within 24 hours.', {
+      style: toastStyle,
+    });
     e.target.reset();
   };
 
   return (
     <InfoLayout
       title={pageData?.title || 'Request Info'}
-      subtitle="Request brochures, pricing, floor plans, or site visits from our consultants."
+      subtitle="Ask for brochures, pricing, or site visit details."
     >
       <InfoPageBody loading={loading} cmsHtml={pageData?.content}>
-        <InfoSectionTitle>Need Specific Details?</InfoSectionTitle>
+        <InfoLead>
+          Need details about a project or locality that is not fully listed yet? Send a request and
+          our team will follow up.
+        </InfoLead>
+
         <InfoText>
-          If you&apos;re looking for detailed brochures, floor plans, or pricing for a specific
-          project or locality that you haven&apos;t found on our platform yet, use this form to send
-          a request to our consultants.
+          If the property is already on Yukthi Properties, use the enquiry option on its detail page
+          for a faster response.
         </InfoText>
 
         <InfoForm onSubmit={handleSubmit}>
           <InfoFormRow>
-            <InfoField label="Project / Locality Name" icon={MapPin}>
+            <InfoField label="Project / locality" icon={MapPin}>
               <InfoInput
                 icon
                 type="text"
                 name="project"
-                placeholder="e.g. Prestige Highfield or Jubilee Hills"
+                placeholder="e.g. Gachibowli or project name"
                 required
               />
             </InfoField>
-            <InfoField label="Information Needed" icon={Info}>
+            <InfoField label="Information needed" icon={Info}>
               <InfoSelect icon name="infoType" required defaultValue="">
                 <option value="" disabled>
-                  Select an option…
+                  Select…
                 </option>
-                <option value="brochure">Project Brochure</option>
-                <option value="pricing">Full Price List</option>
-                <option value="plans">Floor Plans</option>
-                <option value="visit">Schedule a Site Visit</option>
-                <option value="other">Other Details</option>
+                <option value="brochure">Brochure</option>
+                <option value="pricing">Price list</option>
+                <option value="plans">Floor plans</option>
+                <option value="visit">Site visit</option>
+                <option value="other">Other</option>
               </InfoSelect>
             </InfoField>
           </InfoFormRow>
 
           <InfoFormRow>
-            <InfoField label="Your Name" icon={User}>
-              <InfoInput icon type="text" name="name" placeholder="Full Name" required />
+            <InfoField label="Your name" icon={User}>
+              <InfoInput icon type="text" name="name" placeholder="Full name" required />
             </InfoField>
-            <InfoField label="Phone Number" icon={Phone}>
+            <InfoField label="Phone number" icon={Phone}>
               <InfoInput icon type="tel" name="phone" placeholder="+91 00000 00000" required />
             </InfoField>
           </InfoFormRow>
 
-          <InfoField label="Additional Notes (optional)" icon={FileText} multiline>
+          <InfoField label="Notes (optional)" icon={FileText} multiline>
             <InfoTextarea
               icon
               name="notes"
               rows={4}
-              placeholder="Any specific requirements or times to contact you…"
+              placeholder="Budget, BHK preference, or preferred callback time…"
             />
           </InfoField>
 
           <InfoSubmit>
             <Send className="h-4 w-4" />
-            Request Information
+            Request information
           </InfoSubmit>
         </InfoForm>
+
+        <InfoAlert variant="slate">
+          General questions? Visit <InfoLink to="/contact-us">Contact Us</InfoLink>.
+        </InfoAlert>
       </InfoPageBody>
     </InfoLayout>
   );

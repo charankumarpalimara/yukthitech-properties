@@ -1,9 +1,16 @@
 import { useRef, useCallback, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
+import { ChevronL, ChevronR } from '../../data/icons';
 import PropertyCard from '../PropertyCard/PropertyCard';
 import { PropertyCardCarouselPauseContext } from '../PropertyCard/PropertyCardCarouselPauseContext';
 import { useCarouselInView, usePrefersReducedMotion } from '../../hooks/useCarouselInView';
+import { useMaxWidth } from '../../hooks/useMediaQuery';
+import { bindSwiperNavigation } from '../../utils/bindSwiperNavigation';
+import {
+  HOME_CAROUSEL_NAV_OVERLAY_PREV,
+  HOME_CAROUSEL_NAV_OVERLAY_NEXT,
+} from './homeTypographyStyles';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
@@ -15,6 +22,9 @@ export default function HomePropertyCarousel({
   variant = 'vertical',
   swiperKey,
   navigation,
+  overlayNavigation = false,
+  prevClass = '',
+  nextClass = '',
   autoplayDelay = 4200,
   autoplayEnabled = true,
   loop,
@@ -27,6 +37,8 @@ export default function HomePropertyCarousel({
   const prefersReducedMotion = usePrefersReducedMotion();
   const { ref: containerRef, inView } = useCarouselInView({ enabled: autoplayEnabled });
   const shouldAutoplay = autoplayEnabled && inView && !prefersReducedMotion;
+  const isBelowLg = useMaxWidth(1023);
+  const showOverlayNav = overlayNavigation && isBelowLg && prevClass && nextClass;
 
   const setCarouselPaused = useCallback(
     (paused) => {
@@ -46,16 +58,43 @@ export default function HomePropertyCarousel({
     else swiper.autoplay.stop();
   }, [shouldAutoplay]);
 
+  useEffect(() => {
+    const swiper = swiperRef.current;
+    if (!swiper || !navigation?.prevEl || !navigation?.nextEl) return;
+    bindSwiperNavigation(swiper, navigation.prevEl, navigation.nextEl);
+  }, [isBelowLg, navigation?.prevEl, navigation?.nextEl, showOverlayNav]);
+
   if (!properties?.length) return null;
 
   return (
     <PropertyCardCarouselPauseContext.Provider value={setCarouselPaused}>
-      <div ref={containerRef} className="home-feed__carousel">
+      <div ref={containerRef} className="home-feed__carousel relative">
+        {showOverlayNav && (
+          <>
+            <button
+              type="button"
+              className={`${prevClass} ${HOME_CAROUSEL_NAV_OVERLAY_PREV}`}
+              aria-label="Previous"
+            >
+              <ChevronL className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+            </button>
+            <button
+              type="button"
+              className={`${nextClass} ${HOME_CAROUSEL_NAV_OVERLAY_NEXT}`}
+              aria-label="Next"
+            >
+              <ChevronR className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+            </button>
+          </>
+        )}
         <Swiper
-          key={swiperKey}
+          key={`${swiperKey}-${isBelowLg ? 'm' : 'd'}`}
           modules={[Navigation, Autoplay]}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
+            if (navigation?.prevEl && navigation?.nextEl) {
+              bindSwiperNavigation(swiper, navigation.prevEl, navigation.nextEl);
+            }
           }}
           spaceBetween={spaceBetween}
           slidesPerView={slidesPerView}

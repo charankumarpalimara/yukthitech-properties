@@ -1,11 +1,11 @@
 import React from 'react';
 import InfoLayout from '../../components/InfoLayout/InfoLayout';
 import { usePageData } from '../../hooks/usePageData';
-import { AlertTriangle, Users, FileText, PhoneCall, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, Users, FileText, PhoneCall, ShieldAlert, ShieldCheck, Banknote } from 'lucide-react';
 import {
   InfoPageBody,
+  InfoLead,
   InfoSectionTitle,
-  InfoText,
   InfoCardGrid,
   InfoCard,
   InfoAlert,
@@ -14,24 +14,29 @@ import {
 
 const safetyTips = [
   {
-    icon: AlertTriangle,
-    title: 'Verify Before Paying Any Token',
-    desc: 'Never pay token money, advance deposits, or visiting fees to an owner or agent before physically visiting the property and verifying ownership documents. Yukthi Properties never asks for upfront visit charges.',
-  },
-  {
-    icon: Users,
-    title: 'Meet in Safe Public Spaces',
-    desc: 'When scheduling physical site visits or meeting a property owner/agent for the first time, meet during daylight hours and try to bring a trusted friend or family member along with you.',
+    icon: Banknote,
+    title: 'Never pay before you visit',
+    desc: 'Do not transfer token money, advance deposits, or "visit fees" before seeing the property and verifying documents. Yukthi Properties does not charge buyers to view listings.',
   },
   {
     icon: FileText,
-    title: 'Scrutinize Legal Ownership Documents',
-    desc: 'Always verify RERA registration numbers for projects under construction. For resale properties, request and examine the original Sale Deed, Encumbrance Certificate (EC), and recent property tax receipts.',
+    title: 'Check legal documents',
+    desc: 'For under-construction projects, confirm RERA registration. For resale, review the sale deed, encumbrance certificate (EC), and recent tax receipts.',
+  },
+  {
+    icon: Users,
+    title: 'Meet safely in person',
+    desc: 'Schedule site visits during daylight hours. Bring someone you trust when meeting a seller or agent for the first time.',
   },
   {
     icon: PhoneCall,
-    title: 'Keep Communication on Official Channels',
-    desc: 'Interact and communicate via the Yukthi Properties platform whenever possible. This helps maintain official records of communications and listings in case any dispute or misunderstanding arises.',
+    title: 'Use platform channels',
+    desc: 'Keep enquiries and follow-ups on Yukthi Properties where possible so there is a record if a dispute arises.',
+  },
+  {
+    icon: AlertTriangle,
+    title: 'Watch for red flags',
+    desc: 'Be cautious if someone refuses a site visit, pressures you to pay quickly, or claims to be abroad and cannot meet locally.',
   },
 ];
 
@@ -41,33 +46,32 @@ export default function SafetyGuide() {
   return (
     <InfoLayout
       title={pageData?.title || 'Safety Guide'}
-      subtitle="Practical tips to stay safe during your property search and transactions."
+      subtitle="Practical steps to stay safe while searching for property."
     >
       <InfoPageBody loading={loading} cmsHtml={pageData?.content}>
-        <InfoSectionTitle>Your Safety is Our Priority</InfoSectionTitle>
-        <InfoText>
-          At Yukthi Properties, we go to great lengths to verify every single listing. However,
-          property transaction safety is a shared responsibility. We strongly urge you to stay
-          vigilant and follow these guidelines.
-        </InfoText>
+        <InfoLead>
+          We work to keep listings trustworthy, but property deals still need your due diligence.
+          Follow these guidelines before you pay or sign anything.
+        </InfoLead>
 
+        <InfoSectionTitle>Before you transact</InfoSectionTitle>
         <InfoCardGrid cols="sm:grid-cols-2">
           {safetyTips.map((tip) => (
             <InfoCard key={tip.title} icon={tip.icon} title={tip.title}>
-              <p className="text-sm text-slate-600 leading-relaxed">{tip.desc}</p>
+              <p className="text-sm leading-relaxed text-slate-600">{tip.desc}</p>
             </InfoCard>
           ))}
         </InfoCardGrid>
 
-        <InfoAlert variant="danger" icon={ShieldAlert} title="Common Scam Alert">
-          Beware of listing representatives claiming they are currently abroad and cannot show the
-          property in person, asking for token money to &quot;lock&quot; the property. Insist on
-          inspecting the property and meeting a local authorized representative first.
+        <InfoAlert variant="danger" icon={ShieldAlert} title="Common scam pattern">
+          Fraudsters sometimes ask for token money to &quot;hold&quot; a property without a proper
+          site visit. Always inspect the property and meet a local authorised representative first.
         </InfoAlert>
 
         <InfoAlert variant="success" icon={ShieldCheck}>
-          Notice anything suspicious? Help keep our community safe. Please report listings instantly
-          via the <InfoLink to="/report-problem">Report a Problem</InfoLink> page.
+          See something wrong? Report it on{' '}
+          <InfoLink to="/report-problem">Report a Problem</InfoLink> or contact us via{' '}
+          <InfoLink to="/contact-us">Contact Us</InfoLink>.
         </InfoAlert>
       </InfoPageBody>
     </InfoLayout>

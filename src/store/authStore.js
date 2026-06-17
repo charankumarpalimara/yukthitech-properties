@@ -11,8 +11,29 @@ const readUser = () => {
   }
 };
 
+/** JWT may appear on different keys depending on API version. */
+const resolveAuthToken = (json) =>
+  json?.token || json?.accessToken || json?.data?.token || null;
+
+export const hasAuthToken = () => Boolean(localStorage.getItem('token'));
+
+const hasStoredSession = () => Boolean(hasAuthToken() || readUser());
+
+const applyAuthPayload = (json, set) => {
+  const token = resolveAuthToken(json);
+  if (token) localStorage.setItem('token', token);
+  if (json.firebaseToken) localStorage.setItem('firebaseToken', json.firebaseToken);
+  if (json.data) localStorage.setItem('user', JSON.stringify(json.data));
+
+  set({
+    loading: false,
+    isLoggedIn: true,
+    user: json.data || null,
+  });
+};
+
 export const useAuthStore = create((set, get) => ({
-  isLoggedIn: !!localStorage.getItem('token'),
+  isLoggedIn: hasStoredSession(),
   user: readUser(),
   error: null,
   loading: false,
@@ -108,14 +129,10 @@ export const useAuthStore = create((set, get) => ({
       const json = await res.json();
       if (!json.success) throw new Error(json.error || json.message);
 
-      if (json.isRegister) {
-        if (json?.token) localStorage.setItem('token', json.token);
-        if (json.data) localStorage.setItem('user', JSON.stringify(json.data));
-        set({
-          loading: false,
-          isLoggedIn: true,
-          user: json.data,
-        });
+      // isRegister false → profile incomplete: stay on modal step 3 (register), no session yet.
+      // isRegister true  → already registered: log in (token optional on verify).
+      if (json.isRegister === true && json.data) {
+        applyAuthPayload(json, set);
       } else {
         set({ loading: false });
       }
@@ -149,6 +166,9 @@ export const useAuthStore = create((set, get) => ({
   },
 
   getMe: async () => {
+    if (!hasAuthToken()) {
+      return get().user || readUser() || null;
+    }
     try {
       const res = await apiClient(`${AUTH_URL}/me`);
       const json = await res.json();
@@ -157,9 +177,11 @@ export const useAuthStore = create((set, get) => ({
       set({ isLoggedIn: true, user: json.data });
       return json.data;
     } catch {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      set({ isLoggedIn: false, user: null });
+      if (hasAuthToken()) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        set({ isLoggedIn: false, user: null });
+      }
       throw new Error('Session expired');
     }
   },
@@ -175,11 +197,7 @@ export const useAuthStore = create((set, get) => ({
       const json = await res.json();
       if (!json.success) throw new Error(json.error || json.message);
 
-      if (json.token) localStorage.setItem('token', json.token);
-      if (json.firebaseToken) localStorage.setItem('firebaseToken', json.firebaseToken);
-      if (json.data) localStorage.setItem('user', JSON.stringify(json.data));
-
-      set({ loading: false, isLoggedIn: true, user: json.data });
+      applyAuthPayload(json, set);
       return json.data;
     } catch (e) {
       set({ loading: false, error: e.message });

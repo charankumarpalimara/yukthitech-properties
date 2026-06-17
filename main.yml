@@ -40,7 +40,7 @@ jobs:
       #     username: ${{ secrets.SERVER_USER }}
       #     key: ${{ secrets.SERVER_SSH_KEY }}
       #     script: |
-      #       rm -rf /var/www/html/digitalraiz/sherlaproperties/web/*
+      #       rm -rf /var/www/html/digitalraiz/yukthiproperties/web/*
 
       # Upload FULL build folder
       - name: Deploy to server  
@@ -51,7 +51,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           source: "dist/"
-          target: "/var/www/html/digitalraiz/sherlaproperties/web"
+          target: "/var/www/html/digitalraiz/yukthiproperties/web"
           overwrite: true
           command_timeout: 30m
           strip_components: 1

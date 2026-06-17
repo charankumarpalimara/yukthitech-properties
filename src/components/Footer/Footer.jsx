@@ -178,7 +178,7 @@ function StoreAppLink({ href, platform }) {
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50">
         {isAndroid ? <GooglePlayIcon /> : <AppleIcon />}
       </span>
-      <span className="text-left leading-none font-[Roboto,system-ui,sans-serif]">
+      <span className="text-left leading-none font-sans">
         {isAndroid ? (
           <>
             <span className="block text-[9px] font-medium uppercase tracking-[0.05em] text-slate-500">

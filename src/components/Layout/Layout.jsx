@@ -20,8 +20,9 @@ export default function Layout() {
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     const userId = user?._id || user?.id;
-    if (userId) {
+    if (token && userId) {
       fetchWishlist(userId);
     }
   }, [fetchWishlist, user?._id, user?.id]);

@@ -10,17 +10,21 @@ export default function LazyMountSection({
   minHeight = '280px',
   fallback = null,
   className = '',
+  initialInView = false,
+  eager = false,
 }) {
   const { ref, inView } = useCarouselInView({
-    enabled: true,
+    enabled: !eager,
     rootMargin,
     threshold,
-    initialInView: false,
+    initialInView: eager || initialInView,
   });
 
+  const showChildren = eager || inView;
+
   return (
-    <div ref={ref} className={className} style={!inView ? { minHeight } : undefined}>
-      {inView ? children : fallback}
+    <div ref={ref} className={className} style={!showChildren ? { minHeight } : undefined}>
+      {showChildren ? children : fallback}
     </div>
   );
 }

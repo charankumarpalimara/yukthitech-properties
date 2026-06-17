@@ -1,11 +1,12 @@
 import React from 'react';
 import InfoLayout from '../../components/InfoLayout/InfoLayout';
 import { usePageData } from '../../hooks/usePageData';
-import { Shield, Eye, Zap } from 'lucide-react';
+import { Shield, Eye, Zap, Home, Building2 } from 'lucide-react';
 import {
   InfoPageBody,
   InfoLead,
   InfoText,
+  InfoSectionTitle,
   InfoCardGrid,
   InfoCard,
   InfoQuote,
@@ -14,18 +15,31 @@ import {
 const values = [
   {
     icon: Shield,
-    title: 'Uncompromised Trust',
-    desc: 'Every listing undergoes a rigorous verification process to ensure legal compliance and ownership legitimacy.',
+    title: 'Verified listings',
+    desc: 'Listings go through checks so buyers see clearer ownership and project details before they enquire.',
   },
   {
     icon: Eye,
-    title: 'Radical Transparency',
-    desc: 'No hidden fees, no misleading details. We display exact prices, floor plans, and amenities with absolute honesty.',
+    title: 'Transparent information',
+    desc: 'Prices, specifications, and amenities are presented plainly — no hidden charges from our platform.',
   },
   {
     icon: Zap,
-    title: 'Modern Innovation',
-    desc: 'Powering your search with state-of-the-art filtering, local insights, and direct, secure connection to owners and agents.',
+    title: 'Simple discovery',
+    desc: 'Search, filters, and direct contact tools help you move from browsing to site visits faster.',
+  },
+];
+
+const offerings = [
+  {
+    icon: Home,
+    title: 'For buyers',
+    desc: 'Browse residential, commercial, and plot listings across Hyderabad and other cities. Save favourites, compare options, and connect with sellers through the platform.',
+  },
+  {
+    icon: Building2,
+    title: 'For sellers & agents',
+    desc: 'Post properties with subscription plans, manage listings from your dashboard, and reach serious buyers looking for verified inventory.',
   },
 ];
 
@@ -35,42 +49,41 @@ export default function AboutUs() {
   return (
     <InfoLayout
       title={pageData?.title || 'About Us'}
-      subtitle="Building a trusted, transparent real estate experience across India."
+      subtitle="A property platform built around trust, clarity, and ease of use."
     >
       <InfoPageBody loading={loading} cmsHtml={pageData?.content}>
         <InfoLead>
-          Yukthi Properties is the result of a dream that took shape through persistence, passion,
-          and a deep desire to transform the Indian real estate experience. What began as a simple
-          idea — helping people find properties that are truly legit, hassle‑free, and trustworthy —
-          has grown into a mission to bring clarity and confidence to every buyer in India.
+          Yukthi Properties helps buyers discover verified real estate and gives owners and agents a
+          straightforward way to list and manage properties online.
         </InfoLead>
 
         <InfoText>
-          The foundation of this platform was built after thoroughly studying global real estate
-          markets and understanding what makes buyers abroad feel secure and empowered. It became
-          clear that the Indian market lacked the same level of transparency, comfort, and
-          buyer‑first experience. This insight inspired the creation of a platform where trust is
-          not an afterthought but the starting point of every interaction.
+          We started with a simple goal: make property search in India feel more reliable. That means
+          clearer listing information, honest presentation of details, and tools that connect the
+          right buyer with the right seller — without unnecessary friction.
         </InfoText>
 
-        <InfoCardGrid cols="sm:grid-cols-2 lg:grid-cols-3">
-          {values.map((val) => (
-            <InfoCard key={val.title} icon={val.icon} title={val.title}>
-              <p className="text-sm text-slate-600 leading-relaxed">{val.desc}</p>
+        <InfoSectionTitle label="Platform">What we offer</InfoSectionTitle>
+        <InfoCardGrid cols="sm:grid-cols-2">
+          {offerings.map((item) => (
+            <InfoCard key={item.title} icon={item.icon} title={item.title}>
+              <p className="text-sm leading-relaxed text-slate-600">{item.desc}</p>
             </InfoCard>
           ))}
         </InfoCardGrid>
 
-        <InfoText>
-          At Yukthi Properties, transparency, reliability, and ease are woven into the core of
-          everything we do. Every listing is verified with care, every detail is presented with
-          honesty, and every step is designed to make the buyer feel informed and protected.
-        </InfoText>
+        <InfoSectionTitle label="Principles">What we stand for</InfoSectionTitle>
+        <InfoCardGrid cols="sm:grid-cols-2 lg:grid-cols-3">
+          {values.map((val) => (
+            <InfoCard key={val.title} icon={val.icon} title={val.title}>
+              <p className="text-sm leading-relaxed text-slate-600">{val.desc}</p>
+            </InfoCard>
+          ))}
+        </InfoCardGrid>
 
         <InfoQuote attribution="— Team Yukthi Properties">
-          Our logo represents this promise — a symbol of trust, clarity, and new beginnings. Yukthi
-          Properties stands for a future where property buying is simple, secure, and stress‑free.
-          We are here to build that future, one trusted property at a time.
+          We are building a marketplace where every interaction starts with trust — one verified
+          listing and one informed buyer at a time.
         </InfoQuote>
       </InfoPageBody>
     </InfoLayout>

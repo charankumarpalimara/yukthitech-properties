@@ -12,7 +12,7 @@ const EMPTY_HOME = {
   blogs: [],
 };
 
-async function fetchHomeData({ apiCity, coordsKey }) {
+async function fetchHomeData({ apiCity, coordsKey, signal }) {
   let queryParams = 'productsLimit=8&testimonialsLimit=12&blogsLimit=8';
 
   if (coordsKey) {
@@ -24,7 +24,7 @@ async function fetchHomeData({ apiCity, coordsKey }) {
     queryParams += `&city=${encodeURIComponent(apiCity)}`;
   }
 
-  const response = await apiClient(`${API_URL}/dynamic-section?${queryParams}`);
+  const response = await apiClient(`${API_URL}/dynamic-section?${queryParams}`, { signal });
   const data = await response.json();
 
   if (!data.success) {
@@ -45,8 +45,14 @@ async function fetchHomeData({ apiCity, coordsKey }) {
 export function useHomeData(apiCity, coordsKey, locationRevision) {
   return useQuery({
     queryKey: ['home', 'dynamic-section', apiCity, coordsKey, locationRevision],
-    queryFn: () => fetchHomeData({ apiCity, coordsKey }),
+    queryFn: ({ signal }) => fetchHomeData({ apiCity, coordsKey, signal }),
     placeholderData: keepPreviousData,
-    staleTime: 2 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
   });
+}
+
+/** True only on first load with no cached/placeholder data yet. */
+export function isHomeInitialLoad(query) {
+  return query.isPending && query.data == null;
 }

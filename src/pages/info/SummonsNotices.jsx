@@ -1,11 +1,11 @@
 import React from 'react';
 import InfoLayout from '../../components/InfoLayout/InfoLayout';
 import { usePageData } from '../../hooks/usePageData';
+import { COMPANY_OFFICE, COMPANY_EMAILS } from '../../data/constants';
 import { Scale, MapPin, Mail, FileText, Clock } from 'lucide-react';
 import {
   InfoPageBody,
-  InfoSectionTitle,
-  InfoText,
+  InfoLead,
   InfoSubheading,
   InfoHighlightPanel,
   InfoListCard,
@@ -14,10 +14,10 @@ import {
 } from '../../components/InfoLayout/InfoPageUi';
 
 const requiredInfo = [
-  'Official Case Number or reference identifier issued by the court or authority.',
-  'Complete contact coordinates of the serving party or their designated legal counsel.',
-  'Clear and descriptive subject title outlining the specific nature of the summons or notice.',
-  'Certified copy of the petition, complaint, or order in standard digital PDF format.',
+  'Case or reference number from the court or authority.',
+  'Contact details of the serving party or their legal counsel.',
+  'Clear subject describing the nature of the summons or notice.',
+  'Certified copy of the petition, complaint, or order (PDF preferred).',
 ];
 
 export default function SummonsNotices() {
@@ -25,21 +25,16 @@ export default function SummonsNotices() {
 
   return (
     <InfoLayout
-      title={pageData?.title || 'Summons/Notices'}
-      subtitle="How to serve official legal correspondence to Yukthi Properties."
+      title={pageData?.title || 'Summons & Notices'}
+      subtitle="How to serve legal correspondence to Yukthi Properties."
     >
       <InfoPageBody loading={loading} cmsHtml={pageData?.content}>
-        <InfoSectionTitle>Legal Correspondence</InfoSectionTitle>
-        <InfoText>
-          This section outlines the process for serving official legal summons, judicial notices,
-          and administrative government correspondence to Yukthi Properties Private Limited.
-        </InfoText>
+        <InfoLead>
+          Official summons, court notices, and government correspondence should be sent to our
+          registered office or legal inbox so they can be processed without delay.
+        </InfoLead>
 
-        <InfoSubheading icon={Scale}>Service of Legal Notices</InfoSubheading>
-        <InfoText>
-          To ensure immediate processing and avoid administrative delays, legal documents should be
-          served directly through our registered office address or designated legal inbox:
-        </InfoText>
+        <InfoSubheading icon={Scale}>Where to send documents</InfoSubheading>
 
         <InfoHighlightPanel>
           <div className="flex gap-3">
@@ -47,15 +42,18 @@ export default function SummonsNotices() {
               <MapPin className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="font-semibold text-white">Corporate Registered Office</h4>
-              <p className="mt-1 text-sm text-slate-300 leading-relaxed">
+              <h4 className="font-semibold text-white">Registered office</h4>
+              <p className="mt-1 text-sm leading-relaxed text-slate-300">
                 Yukthi Properties Pvt. Ltd.
                 <br />
                 Attn: Legal Department
                 <br />
-                12th Floor, Elite Towers, Jubilee Hills
-                <br />
-                Hyderabad, Telangana - 500033
+                {COMPANY_OFFICE.lines.map((line) => (
+                  <React.Fragment key={line}>
+                    {line}
+                    <br />
+                  </React.Fragment>
+                ))}
               </p>
             </div>
           </div>
@@ -65,9 +63,9 @@ export default function SummonsNotices() {
                 <Mail className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-semibold text-white">Legal Inbox</h4>
+                <h4 className="font-semibold text-white">Legal inbox</h4>
                 <InfoMailLink
-                  email="legal@yukthiproperties.com"
+                  email={COMPANY_EMAILS.legal}
                   className="text-gold hover:text-gold-light"
                 />
               </div>
@@ -75,14 +73,10 @@ export default function SummonsNotices() {
           </div>
         </InfoHighlightPanel>
 
-        <InfoListCard icon={FileText} title="Information Required for Processing">
-          <p className="mb-3 text-sm text-slate-600 leading-relaxed">
-            All incoming summons and legal notices must contain complete, accurate metadata to avoid
-            delays in identification:
-          </p>
+        <InfoListCard icon={FileText} title="Include with your notice">
           <ul className="list-disc space-y-2 pl-5">
             {requiredInfo.map((item) => (
-              <li key={item} className="text-sm text-slate-600 leading-relaxed">
+              <li key={item} className="text-sm leading-relaxed text-slate-600">
                 {item}
               </li>
             ))}
@@ -90,9 +84,8 @@ export default function SummonsNotices() {
         </InfoListCard>
 
         <InfoAlert variant="warning" icon={Clock}>
-          <strong>Processing Timeline:</strong> Our legal department acknowledges receipt of all
-          validly served documents within 48 business hours. For highly time-sensitive issues,
-          please include &quot;URGENT&quot; in the email subject or postal marking.
+          <strong>Processing:</strong> Valid documents are acknowledged within 48 business hours.
+          Mark time-sensitive mail as &quot;URGENT&quot; in the subject line.
         </InfoAlert>
       </InfoPageBody>
     </InfoLayout>

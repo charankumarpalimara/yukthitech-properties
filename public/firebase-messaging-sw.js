@@ -8,9 +8,9 @@ importScripts(
 
 firebase.initializeApp({
   apiKey: "AIzaSyBpKzT4vU8iVljA4NVxSgjd2i_6vwPkFRM",
-  authDomain: "sherlaproperties-de3b7.firebaseapp.com",
-  projectId: "sherlaproperties-de3b7",
-  storageBucket: "sherlaproperties-de3b7.firebasestorage.app",
+  authDomain: "yukthiproperties-de3b7.firebaseapp.com",
+  projectId: "yukthiproperties-de3b7",
+  storageBucket: "yukthiproperties-de3b7.firebasestorage.app",
   messagingSenderId: "4824101919",
   appId: "1:4824101919:web:03df9ec85fddc38814512a",
   measurementId: "G-4QK6TND4JZ"

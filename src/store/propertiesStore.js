@@ -159,7 +159,7 @@ export const usePropertiesStore = create((set, get) => ({
   },
 
   fetchWishlist: async (userId) => {
-    if (!userId) return;
+    if (!userId || !localStorage.getItem('token')) return;
     set({ wishlistLoading: true, error: null });
     try {
       const res = await apiClient(`${API_URL}/wishlist/${userId}`);
@@ -176,7 +176,7 @@ export const usePropertiesStore = create((set, get) => ({
   },
 
   toggleWishlist: async (propertyId, userId) => {
-    if (!userId) return false;
+    if (!userId || !localStorage.getItem('token')) return false;
     try {
       const res = await apiClient(`${API_URL}/wishlist/toggle/${propertyId}`, {
         method: 'POST',

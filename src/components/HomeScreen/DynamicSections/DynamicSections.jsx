@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import HomeSectionHeader from '../HomeSectionHeader';
 import HomePropertyCarousel from '../HomePropertyCarousel';
 import LazyMountSection from '../LazyMountSection';
+import { SectionLoader } from '../../Loader/Loader';
 import { slugOrId } from '../../../utils/slugOrId';
 import { getCompletionPercentage } from '../../../utils/propertyCompletion';
 
@@ -48,20 +49,11 @@ const formatProperty = (backendProp) => ({
   address: backendProp.address,
 });
 
-function SectionSkeleton() {
-  return (
-    <div className="w-full animate-pulse space-y-4" aria-hidden>
-      <div className="h-8 w-48 rounded-lg bg-slate-200" />
-      <div className="flex gap-4 overflow-hidden">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-[220px] w-[42%] shrink-0 rounded-2xl bg-slate-200 sm:w-[28%]" />
-        ))}
-      </div>
-    </div>
-  );
+function SectionFallback() {
+  return <SectionLoader text="Loading listings..." minHeight="420px" />;
 }
 
-export default function DynamicSections({ isSidebarOpen, sections, lazyMountSections = false }) {
+function DynamicSections({ sections, lazyMountSections = false }) {
   const formattedSections = useMemo(() => {
     if (!sections?.length) return [];
     const variants = ['vertical', 'land', 'horizontal', 'vertical', 'land'];
@@ -111,15 +103,19 @@ export default function DynamicSections({ isSidebarOpen, sections, lazyMountSect
               viewAllTo={viewAllTo}
               viewAllLabel="View all"
               showNav
+              navLayout="split"
               prevClass={prevClass}
               nextClass={nextClass}
             />
 
             <HomePropertyCarousel
-              swiperKey={`${isSidebarOpen}-${index}`}
+              swiperKey={`section-${index}`}
               properties={section.properties}
               variant={section.displayVariant || 'vertical'}
               autoplayEnabled={index < 1}
+              overlayNavigation
+              prevClass={prevClass}
+              nextClass={nextClass}
               navigation={{
                 prevEl: `.${prevClass}`,
                 nextEl: `.${nextClass}`,
@@ -144,7 +140,7 @@ export default function DynamicSections({ isSidebarOpen, sections, lazyMountSect
             key={section._id || index}
             minHeight="420px"
             rootMargin="320px 0px"
-            fallback={<SectionSkeleton />}
+            fallback={<SectionFallback />}
           >
             {block}
           </LazyMountSection>
@@ -153,3 +149,5 @@ export default function DynamicSections({ isSidebarOpen, sections, lazyMountSect
     </div>
   );
 }
+
+export default memo(DynamicSections);

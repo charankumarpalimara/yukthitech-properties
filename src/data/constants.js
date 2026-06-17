@@ -743,8 +743,29 @@ export const FOOTER_CONTACT = {
   phoneHref: 'tel:+919804293293',
   email: 'info@yukthiproperties.com',
   emailHref: 'mailto:info@yukthiproperties.com',
-  // address: 'Manjeera Majestic Commercial, KPHB–JNTU Road, Hyderabad 500085, Telangana',
-  // hours: 'Mon – Sat: 9:00 AM – 6:00 PM',
+};
+
+export const COMPANY_OFFICE = {
+  name: 'Yukthi Properties',
+  lines: [
+    '#801, Manjeera Majestic Commercial,',
+    'KPHB–JNTU Road, Hyderabad 500085,',
+    'Telangana, India',
+  ],
+};
+
+export const COMPANY_HOURS = {
+  support: 'Monday – Saturday, 9:00 AM – 6:00 PM IST',
+  grievance: 'Monday – Friday, 10:00 AM – 5:00 PM IST',
+};
+
+export const COMPANY_EMAILS = {
+  info: 'info@yukthiproperties.com',
+  support: 'support@yukthiproperties.com',
+  grievance: 'grievance@yukthiproperties.com',
+  privacy: 'privacy@yukthiproperties.com',
+  legal: 'legal@yukthiproperties.com',
+  careers: 'careers@yukthiproperties.com',
 };
 
 export const FOOTER_EXPLORE = [
@@ -777,6 +798,7 @@ export const FOOTER_LINKS = {
     { label: 'About Us', path: '/about-us' },
     { label: 'Contact Us', path: '/contact-us' },
     { label: 'Safety Guide', path: '/safety-guide' },
+    { label: 'Report a Problem', path: '/report-problem' },
     { label: 'Grievances', path: '/grievances' },
   ],
   // Fallback static explore links used when backend cities are not yet loaded

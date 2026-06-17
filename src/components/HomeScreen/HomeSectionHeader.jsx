@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useMaxWidth } from '../../hooks/useMediaQuery';
 import {
   preloadPropertiesPage,
   preloadCollectionPage,
@@ -10,6 +11,7 @@ import {
   HOME_SECTION_TITLE,
   HOME_SECTION_SUBTITLE,
   HOME_VIEW_ALL_BTN,
+  HOME_CAROUSEL_NAV_ROUND,
 } from './homeTypographyStyles';
 
 /**
@@ -22,6 +24,7 @@ export default function HomeSectionHeader({
   viewAllTo,
   viewAllLabel = 'View all',
   showNav = false,
+  navLayout = 'inline',
   prevClass = '',
   nextClass = '',
   onViewAllClick,
@@ -29,6 +32,8 @@ export default function HomeSectionHeader({
   variant = 'light',
 }) {
   const isDark = variant === 'dark';
+  const isBelowLg = useMaxWidth(1023);
+  const showHeaderNav = showNav && (navLayout !== 'split' || !isBelowLg);
 
   return (
     <div
@@ -69,22 +74,24 @@ export default function HomeSectionHeader({
       </div>
 
       <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-        {showNav && (
+        {showHeaderNav && (
           <>
-            <button
-              type="button"
-              className={`${prevClass} flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-sm transition-all hover:border-slate-900 hover:bg-slate-900 hover:text-white disabled:pointer-events-none disabled:opacity-30`}
-              aria-label="Previous"
-            >
-              <ChevronL />
-            </button>
-            <button
-              type="button"
-              className={`${nextClass} flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-sm transition-all hover:border-slate-900 hover:bg-slate-900 hover:text-white disabled:pointer-events-none disabled:opacity-30`}
-              aria-label="Next"
-            >
-              <ChevronR />
-            </button>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <button
+                type="button"
+                className={`${prevClass} ${HOME_CAROUSEL_NAV_ROUND}`}
+                aria-label="Previous"
+              >
+                <ChevronL className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+              </button>
+              <button
+                type="button"
+                className={`${nextClass} ${HOME_CAROUSEL_NAV_ROUND}`}
+                aria-label="Next"
+              >
+                <ChevronR className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+              </button>
+            </div>
             <span className="mx-1 hidden h-6 w-px bg-slate-200 sm:block" aria-hidden />
           </>
         )}
@@ -94,7 +101,7 @@ export default function HomeSectionHeader({
             to={viewAllTo}
             className={
               isDark
-                ? 'inline-flex h-11 items-center gap-2 rounded-full bg-gold px-6 text-sm font-semibold text-slate-900 no-underline shadow-sm transition-all hover:bg-gold-light active:scale-[0.98]'
+                ? 'inline-flex h-11 items-center gap-2 rounded-none bg-gold px-6 text-sm font-semibold text-slate-900 no-underline shadow-sm transition-all hover:bg-gold-light active:scale-[0.98]'
                 : HOME_VIEW_ALL_BTN
             }
             onMouseEnter={() => {
@@ -114,7 +121,7 @@ export default function HomeSectionHeader({
             onClick={onViewAllClick}
             className={
               isDark
-                ? 'inline-flex h-11 items-center gap-2 rounded-full bg-gold px-6 text-sm font-semibold text-slate-900 no-underline shadow-sm transition-all hover:bg-gold-light active:scale-[0.98]'
+                ? 'inline-flex h-11 items-center gap-2 rounded-none bg-gold px-6 text-sm font-semibold text-slate-900 no-underline shadow-sm transition-all hover:bg-gold-light active:scale-[0.98]'
                 : HOME_VIEW_ALL_BTN
             }
           >

@@ -1,14 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSubscriptionStore, fetchPlans, purchaseSubscription } from '../store/subscriptionStore';
 import { useAuthStore, openLoginModal, getMe } from '../store/authStore';
 import toast from 'react-hot-toast';
-import { CheckCircle2, X, ArrowRight, Crown, Sparkles } from 'lucide-react';
+import {
+  Check,
+  X,
+  ArrowRight,
+  Crown,
+  Star,
+  Building2,
+  ShieldCheck,
+  Zap,
+  Sparkles,
+} from 'lucide-react';
 import Modal from '../components/vendor/components/ui/Modal';
 import VendorRegistrationModal from '../components/vendor/VendorRegistrationModal';
 import { isVendorRegistered } from '../utils/isVendorRegistered';
 import { formatPurchaseToastError } from '../utils/getErrorMessage';
-import { useNavigate, useSearchParams, Navigate } from 'react-router-dom';
+import { useNavigate, useSearchParams, Navigate, Link } from 'react-router-dom';
 import { isSellerUserType } from '../utils/isSellerUserType';
+
+const TRUST_ITEMS = [
+  { icon: ShieldCheck, label: 'Secure Razorpay checkout' },
+  { icon: Building2, label: 'Reach verified buyers' },
+  { icon: Zap, label: 'Instant plan activation' },
+];
 
 const getListingTypeMeta = (plan) => {
   const raw = String(plan?.listingPlacement || plan?.listingType || '')
@@ -19,22 +35,235 @@ const getListingTypeMeta = (plan) => {
 
   if (isFeatured) {
     return {
-      label: 'Featured Listing',
-      className: 'bg-indigo-50 text-indigo-800 border border-indigo-200/70',
+      label: 'Featured',
+      className: 'bg-gold/15 text-gold border-gold/25',
     };
   }
 
   return {
-    label: 'Premium Listing',
-    className: 'bg-amber-50 text-amber-800 border border-amber-200/70',
+    label: 'Premium',
+    className: 'bg-primary/10 text-primary border-primary/15',
   };
 };
 
+const getPlanTier = (plan) => {
+  const name = String(plan?.name || '').toLowerCase();
+  if (name.includes('premium') || getListingTypeMeta(plan).label === 'Featured') return 'premium';
+  if (name.includes('standard') || name.includes('pro')) return 'standard';
+  return 'basic';
+};
+
+function PlanCardSkeleton() {
+  return (
+    <div className="flex h-full min-h-[420px] flex-col rounded-3xl border-2 border-slate-100 bg-white p-6 animate-pulse">
+      <div className="mb-6 h-5 w-24 rounded-full bg-slate-100" />
+      <div className="mb-2 h-7 w-32 rounded-lg bg-slate-100" />
+      <div className="mb-6 h-10 w-28 rounded-lg bg-slate-100" />
+      <div className="mb-4 h-px w-full bg-slate-100" />
+      <div className="flex-1 space-y-3">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="h-4 rounded bg-slate-100" style={{ width: `${70 + i * 5}%` }} />
+        ))}
+      </div>
+      <div className="mt-6 h-12 rounded-xl bg-slate-100" />
+    </div>
+  );
+}
+
+function PlanCard({ plan, billingCycle, onSelect }) {
+  const tier = getPlanTier(plan);
+  const isPremium = tier === 'premium';
+  const isStandard = tier === 'standard';
+  const isPopular = Boolean(plan.highlightTag);
+  const listingMeta = getListingTypeMeta(plan);
+
+  const price =
+    billingCycle === 'annual' ? plan.annualPrice || 0 : plan.monthlyPrice || 0;
+  const propertyLimit =
+    billingCycle === 'annual'
+      ? plan.annualPropertyLimit || plan.propertyLimit
+      : plan.monthlyPropertyLimit || plan.propertyLimit;
+
+  const annualSavings =
+    plan.monthlyPrice > 0 && plan.annualPrice > 0
+      ? plan.monthlyPrice * 12 - plan.annualPrice
+      : 0;
+
+  const sortedFeatures = [...(plan.features || [])].sort(
+    (a, b) => (b.isIncluded ? 1 : 0) - (a.isIncluded ? 1 : 0)
+  );
+
+  return (
+    <article
+      className={`relative flex h-full flex-col rounded-3xl border-2 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+        isPremium
+          ? 'border-gold/35 bg-gradient-to-br from-[#011f16] via-primary to-[#034432] text-white shadow-lg shadow-primary/20'
+          : isStandard
+            ? 'border-primary/20 bg-white shadow-sm hover:border-gold/40'
+            : 'border-slate-200/80 bg-white shadow-sm hover:border-slate-300'
+      } ${isPopular && !isPremium ? 'ring-2 ring-gold/30 ring-offset-2' : ''}`}
+    >
+      {isPopular && (
+        <div
+          className={`absolute right-0 top-0 flex items-center gap-1 rounded-bl-xl rounded-tr-[22px] px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest shadow-sm ${
+            isPremium
+              ? 'bg-gradient-to-r from-gold to-gold-600 text-[#011f16]'
+              : 'bg-gradient-to-r from-primary to-[#034432] text-white'
+          }`}
+        >
+          <Star className="h-3 w-3 shrink-0 fill-current" />
+          {plan.highlightTag || 'Popular'}
+        </div>
+      )}
+
+      <div className={`mb-5 ${isPopular ? 'pt-4' : ''}`}>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <span
+            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${listingMeta.className}`}
+          >
+            {listingMeta.label} listing
+          </span>
+        </div>
+
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <h3
+              className={`text-xl font-bold tracking-tight ${isPremium ? 'text-gold' : 'text-slate-900'}`}
+            >
+              {plan.name}
+            </h3>
+            <p className={`mt-1 text-xs font-medium ${isPremium ? 'text-white/50' : 'text-slate-400'}`}>
+              Seller plan
+            </p>
+          </div>
+          {isPremium && (
+            <span className="rounded-xl bg-gold/15 p-2 text-gold">
+              <Crown className="h-5 w-5" />
+            </span>
+          )}
+        </div>
+
+        <div className="mt-5 flex items-baseline gap-0.5">
+          <span className={`text-lg font-bold ${isPremium ? 'text-white/60' : 'text-slate-400'}`}>
+            ₹
+          </span>
+          <span
+            className={`text-4xl font-extrabold tabular-nums leading-none tracking-tight ${isPremium ? 'text-white' : 'text-slate-900'}`}
+          >
+            {price.toLocaleString('en-IN')}
+          </span>
+          <span className={`ml-1 text-xs font-semibold ${isPremium ? 'text-white/50' : 'text-slate-500'}`}>
+            / {billingCycle === 'annual' ? 'year' : 'month'}
+          </span>
+        </div>
+
+        {billingCycle === 'annual' && annualSavings > 0 && (
+          <div
+            className={`mt-3 inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold ${
+              isPremium
+                ? 'border-gold/25 bg-gold/10 text-gold'
+                : 'border-emerald-100 bg-emerald-50 text-emerald-700'
+            }`}
+          >
+            <Check className="h-3 w-3" strokeWidth={3} />
+            Save ₹{annualSavings.toLocaleString('en-IN')} yearly
+          </div>
+        )}
+      </div>
+
+      <div className={`mb-5 h-px w-full ${isPremium ? 'bg-white/10' : 'bg-slate-100'}`} />
+
+      <div className="flex-1 space-y-3">
+        <p
+          className={`text-[10px] font-bold uppercase tracking-wider ${isPremium ? 'text-gold/60' : 'text-slate-400'}`}
+        >
+          What&apos;s included
+        </p>
+
+        <div className="flex items-start gap-2.5">
+          <span
+            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
+              isPremium ? 'bg-gold/20 text-gold' : 'bg-emerald-50 text-emerald-600'
+            }`}
+          >
+            <Check className="h-3 w-3" strokeWidth={3} />
+          </span>
+          <span className={`text-sm font-semibold ${isPremium ? 'text-slate-200' : 'text-slate-700'}`}>
+            List up to {propertyLimit} properties
+          </span>
+        </div>
+
+        {sortedFeatures.map((feature, i) => {
+          const included = feature.isIncluded !== false;
+          return (
+            <div
+              key={feature._id || i}
+              className={`flex items-start gap-2.5 ${!included ? 'opacity-45' : ''}`}
+            >
+              <span
+                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
+                  included
+                    ? isPremium
+                      ? 'bg-gold/20 text-gold'
+                      : 'bg-emerald-50 text-emerald-600'
+                    : isPremium
+                      ? 'bg-white/10 text-white/40'
+                      : 'bg-slate-50 text-slate-400'
+                }`}
+              >
+                {included ? (
+                  <Check className="h-3 w-3" strokeWidth={3} />
+                ) : (
+                  <X className="h-3 w-3" strokeWidth={3} />
+                )}
+              </span>
+              <span
+                className={`text-sm font-medium leading-snug ${
+                  included
+                    ? isPremium
+                      ? 'text-slate-200'
+                      : 'text-slate-600'
+                    : isPremium
+                      ? 'text-slate-400'
+                      : 'text-slate-500'
+                }`}
+              >
+                {feature.name}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => onSelect(plan)}
+        className={`group mt-6 flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold transition-all active:scale-[0.98] ${
+          isPremium
+            ? 'bg-gold text-[#011f16] shadow-md shadow-gold/20 hover:bg-gold-400 hover:shadow-lg'
+            : isPopular
+              ? 'bg-primary text-white shadow-md shadow-primary/20 hover:bg-[#034432]'
+              : 'border border-slate-200 bg-white text-slate-800 shadow-sm hover:border-primary/30 hover:bg-primary/5 hover:text-primary'
+        }`}
+      >
+        {isPremium ? (
+          <Crown className="h-4 w-4" />
+        ) : (
+          <Sparkles className={`h-4 w-4 ${isPopular ? 'text-gold' : 'text-primary'}`} />
+        )}
+        <span>{plan.cta || 'Choose plan'}</span>
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+      </button>
+    </article>
+  );
+}
+
 export default function Subscription() {
   const [billingCycleTab, setBillingCycleTab] = useState('monthly');
-  const [vendorRegistrationForm, setVendorRegistrationForm] = useState(true);
+  const [vendorRegistrationForm, setVendorRegistrationForm] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const plans = useSubscriptionStore((s) => s.plans);
+  const loading = useSubscriptionStore((s) => s.loading);
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
@@ -63,6 +292,25 @@ export default function Subscription() {
     fetchPlans();
   }, [sellerRedirect]);
 
+  const visiblePlans = useMemo(
+    () =>
+      plans.filter((plan) => {
+        if (billingCycleTab === 'annual') {
+          return (
+            (plan.annualPropertyLimit > 0 || plan.propertyLimit > 0) &&
+            plan.annualPrice != null &&
+            plan.annualPrice !== 0
+          );
+        }
+        return (
+          (plan.monthlyPropertyLimit > 0 || plan.propertyLimit > 0) &&
+          plan.monthlyPrice != null &&
+          plan.monthlyPrice !== 0
+        );
+      }),
+    [plans, billingCycleTab]
+  );
+
   if (sellerRedirect) {
     return <Navigate to={sellerRedirect} replace />;
   }
@@ -74,12 +322,17 @@ export default function Subscription() {
     return (plan.monthlyPrice || 0).toLocaleString('en-IN');
   };
 
-  const getAnnualTotal = (plan) => {
-    if (plan.annualPrice === 0) return 'Free forever';
-    if (plan.annualPrice != null && plan.annualPrice > 0) {
-      return `Billed annually at ₹${plan.annualPrice.toLocaleString('en-IN')}`;
+  const getPropertyLimit = (plan) =>
+    billingCycleTab === 'annual'
+      ? plan.annualPropertyLimit || plan.propertyLimit
+      : plan.monthlyPropertyLimit || plan.propertyLimit;
+
+  const handlePlanSelect = (plan) => {
+    if (!isLoggedIn) {
+      openLoginModal('Login required to choose a plan');
+      return;
     }
-    return '\u00A0';
+    setSelectedPlan(plan);
   };
 
   const handleBuy = () => {
@@ -99,12 +352,12 @@ export default function Subscription() {
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
       durationType: billingCycleTab,
-      price: billingCycleTab === 'annual' ? selectedPlan.annualPrice : selectedPlan.monthlyPrice,
+      price:
+        billingCycleTab === 'annual' ? selectedPlan.annualPrice : selectedPlan.monthlyPrice,
     };
 
     toast.promise(
       purchaseSubscription(purchaseData).then(() => {
-        // Sync user state and intelligently route or prompt profile completion
         getMe()
           .then((updatedUser) => {
             if (isVendorRegistered(updatedUser)) {
@@ -115,7 +368,6 @@ export default function Subscription() {
             }
           })
           .catch(() => {
-            // Fallback if getMe fails
             setVendorRegistrationForm(true);
           });
       }),
@@ -127,259 +379,196 @@ export default function Subscription() {
     );
     setSelectedPlan(null);
   };
-  return (
-    <div className="bg-slate-50 min-h-screen px-5 pb-[60px] text-slate-900 relative z-10">
-      <div className="max-w-[1280px] mx-auto">
-        <header className="text-center max-w-[600px] mx-auto mb-7 pt-6 flex flex-col items-center">
-          {/* <div className="bg-amber-500 text-white px-3 py-0.5 rounded-full font-bold text-[0.65rem] tracking-widest uppercase mb-3 border border-amber-400">
-            Agent &amp; Developer Portal
-          </div> */}
-          <h1 className="text-[1.7rem] font-bold leading-tight tracking-tight mb-2 text-slate-900">
-            Scale your real estate empire.
-          </h1>
-          {/* <p className="text-[0.86rem] text-slate-500 leading-relaxed mb-4">
-            Unlock premium buyer leads, dominate search visibility, and post unlimited properties.
-          </p> */}
 
-          <div className="inline-flex bg-slate-100 rounded-full p-1 relative shadow-inner border border-slate-200 w-full max-w-[380px] h-[42px]">
-            <div
-              className={`absolute top-1 bottom-1 rounded-full bg-white shadow-sm z-10 transition-all duration-300`}
-              style={{
-                width: 'calc(50% - 4px)',
-                left: billingCycleTab === 'monthly' ? '4px' : 'calc(50%)',
-              }}
-            />
+  return (
+    <div className="min-h-screen bg-surface font-outfit text-slate-900">
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-[#034432] to-primary-dark px-5 pb-24 pt-10 text-white sm:px-8 sm:pt-14 sm:pb-28">
+        <div
+          className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gold/15 blur-3xl"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -bottom-32 -left-16 h-56 w-56 rounded-full bg-white/5 blur-3xl"
+          aria-hidden
+        />
+
+        <div className="relative z-10 mx-auto max-w-[1280px] text-center">
+          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-gold/30 bg-gold/10 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-gold">
+            <Building2 className="h-3.5 w-3.5" />
+            For owners &amp; agents
+          </span>
+
+          <h1 className="mx-auto max-w-2xl text-[1.75rem] text-white font-bold leading-tight tracking-tight sm:text-4xl">
+            List your property and reach serious buyers
+          </h1>
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white/70 sm:text-base">
+            Choose a plan that fits your listings. Get visibility, verified enquiries, and seller
+            tools on Yukthi Properties.
+          </p>
+
+          {/* Billing toggle */}
+          <div className="mx-auto mt-8 inline-flex h-12 w-full max-w-[400px] rounded-full border border-white/15 bg-white/10 p-1 backdrop-blur-sm">
             <button
-              className={`flex-1 h-full rounded-full text-[0.8rem] font-medium border-none bg-transparent cursor-pointer transition-colors duration-300 relative z-20 flex items-center justify-center gap-2 whitespace-nowrap ${billingCycleTab === 'monthly' ? 'text-slate-900 font-bold' : 'text-slate-500 hover:text-slate-700'}`}
+              type="button"
               onClick={() => setBillingCycleTab('monthly')}
+              className={`relative z-10 flex flex-1 items-center justify-center rounded-full text-sm font-bold transition-all ${
+                billingCycleTab === 'monthly' ? 'bg-white text-primary shadow-md' : 'text-white/70 hover:text-white'
+              }`}
             >
-              Billed Monthly
+              Monthly
             </button>
             <button
-              className={`flex-1 h-full rounded-full text-[0.8rem] font-medium border-none bg-transparent cursor-pointer transition-colors duration-300 relative z-20 flex items-center justify-center gap-2 whitespace-nowrap ${billingCycleTab === 'annual' ? 'text-slate-900 font-bold' : 'text-slate-500 hover:text-slate-700'}`}
+              type="button"
               onClick={() => setBillingCycleTab('annual')}
+              className={`relative z-10 flex flex-1 items-center justify-center gap-1.5 rounded-full text-sm font-bold transition-all ${
+                billingCycleTab === 'annual' ? 'bg-white text-primary shadow-md' : 'text-white/70 hover:text-white'
+              }`}
             >
-              Billed Annually
+              Annual
               <span
-                className={`text-[0.6rem] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider transition-all duration-300 border ${billingCycleTab === 'annual' ? 'bg-amber-500 text-white border-transparent shadow-sm' : 'bg-amber-50 text-amber-700 border-amber-700/10'}`}
+                className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                  billingCycleTab === 'annual'
+                    ? 'bg-gold text-[#011f16]'
+                    : 'bg-gold/20 text-gold'
+                }`}
               >
-                Save 20%
+                Save
               </span>
             </button>
           </div>
-        </header>
 
-        <div className="flex flex-wrap justify-center items-stretch gap-4 w-full">
-          {plans
-            .filter((plan) => {
-              if (billingCycleTab === 'annual') {
-                return (
-                  (plan.annualPropertyLimit > 0 || plan.propertyLimit > 0) &&
-                  plan.annualPrice !== null &&
-                  plan.annualPrice !== 0
-                );
-              }
-              return (
-                (plan.monthlyPropertyLimit > 0 || plan.propertyLimit > 0) &&
-                plan.monthlyPrice !== null &&
-                plan.monthlyPrice !== 0
-              );
-            })
-            .map((plan) => {
-              const isPopular = plan.highlightTag;
-              const listingTypeMeta = getListingTypeMeta(plan);
-
-              return (
-                <div
-                  key={plan._id || plan.id}
-                  className={`w-full max-w-[300px] sm:w-[300px] bg-white border rounded-2xl flex flex-col relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(0,0,0,0.06)] h-full group ${
-                    isPopular
-                      ? 'border-amber-500 border-2 shadow-[0_8px_16px_rgba(245,158,11,0.1)]'
-                      : 'border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.02)]'
-                  }`}
-                >
-                  {isPopular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 h-6 bg-amber-500 px-4 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-white font-bold text-[0.65rem] tracking-wider uppercase whitespace-nowrap">
-                        {isPopular}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className={`flex flex-col h-full p-5 ${isPopular ? 'pt-7' : ''}`}>
-                    <div className=" pb-3">
-                      <div className="mb-2">
-                        <span
-                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${listingTypeMeta.className}`}
-                        >
-                          {listingTypeMeta.label}
-                        </span>
-                      </div>
-                      <h3 className="text-3xl font-semibold text-slate-900 mb-3">{plan.name}</h3>
-                      <div className="flex items-start gap-0.5">
-                        <span className="text-2xl font-semibold text-slate-900 ">₹</span>
-                        <span className="text-2xl font-semibold text-slate-900 leading-none tracking-tight">
-                          {getDisplayPrice(plan)}
-                        </span>
-                        <span className="text-[0.8rem] text-slate-500 font-medium self-end mb-1 ml-1">
-                          {billingCycleTab === 'annual' ? '/Yearly' : '/Monthly'}
-                        </span>
-                      </div>
-                      <div className="text-[0.7rem] text-slate-400 mt-0.2 min-h-[14px]">
-                        {billingCycleTab === 'annual' && plan.annualPrice
-                          ? getAnnualTotal(plan)
-                          : '\u00A0'}
-                      </div>
-                    </div>
-
-                    <div className="flex-1 mb-4">
-                      <ul className="flex flex-col gap-2">
-                        <li className="flex items-start gap-2 text-[0.8rem] leading-[1.4] text-slate-700">
-                          <div className="mt-[2px] text-emerald-500 shrink-0">
-                            <CheckCircle2 size={16} strokeWidth={2.5} />
-                          </div>
-                          <span>
-                            List Upto{' '}
-                            {billingCycleTab === 'annual'
-                              ? plan.annualPropertyLimit || plan.propertyLimit
-                              : plan.monthlyPropertyLimit || plan.propertyLimit}{' '}
-                            Properties
-                          </span>
-                        </li>
-                        {[...(plan.features || [])]
-                          .sort((a, b) => (b.isIncluded ? 1 : 0) - (a.isIncluded ? 1 : 0))
-                          .map((feature, i) => (
-                            <li
-                              key={feature._id || i}
-                              className={`flex items-start gap-2 text-[0.8rem] leading-[1.4] ${!feature.isIncluded ? 'text-slate-400' : 'text-slate-700'}`}
-                            >
-                              <div
-                                className={`mt-[2px] shrink-0 ${!feature.isIncluded ? 'text-slate-300' : 'text-emerald-500'}`}
-                              >
-                                {feature.isIncluded ? (
-                                  <CheckCircle2 size={16} strokeWidth={2.5} />
-                                ) : (
-                                  <X size={16} strokeWidth={2.5} />
-                                )}
-                              </div>
-                              <span>{feature.name}</span>
-                            </li>
-                          ))}
-                      </ul>
-                    </div>
-
-                    <div className="mt-auto">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!isLoggedIn) {
-                            openLoginModal('Login required to choose a plan');
-                          } else {
-                            setSelectedPlan(plan);
-                          }
-                        }}
-                        className={`w-full py-2 px-4 rounded-xl text-[0.85rem] font-bold cursor-pointer transition-all duration-200 border flex items-center justify-center gap-2 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
-                          isPopular
-                            ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white border-amber-500 shadow-sm shadow-amber-500/25 hover:from-amber-600 hover:to-amber-700 hover:shadow-md hover:shadow-amber-500/35 focus-visible:ring-amber-400'
-                            : 'bg-white text-slate-800 border-slate-200 shadow-sm hover:border-amber-300 hover:bg-amber-50/80 hover:text-amber-900 focus-visible:ring-amber-300'
-                        }`}
-                      >
-                        {isPopular ? (
-                          <Crown
-                            size={16}
-                            strokeWidth={2.25}
-                            className="shrink-0 opacity-95"
-                            aria-hidden
-                          />
-                        ) : (
-                          <Sparkles
-                            size={16}
-                            strokeWidth={2.25}
-                            className="shrink-0 text-amber-500"
-                            aria-hidden
-                          />
-                        )}
-                        <span>{plan.cta || 'Choose Plan'}</span>
-                        <ArrowRight
-                          size={15}
-                          strokeWidth={2.5}
-                          className="shrink-0 transition-transform duration-200 group-hover:translate-x-1"
-                          aria-hidden
-                        />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+            {TRUST_ITEMS.map(({ icon: Icon, label }) => (
+              <span
+                key={label}
+                className="inline-flex items-center gap-2 text-xs font-semibold text-white/75 sm:text-sm"
+              >
+                <Icon className="h-4 w-4 text-gold" />
+                {label}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
+      {/* Plans grid */}
+      <section className="relative z-20 mx-auto -mt-14 max-w-[1280px] px-5 pb-16 sm:px-8 sm:pb-20">
+        {loading ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <PlanCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : visiblePlans.length === 0 ? (
+          <div className="rounded-3xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
+            <Building2 className="mx-auto mb-4 h-10 w-10 text-slate-300" />
+            <h2 className="text-lg font-bold text-slate-900">No plans available</h2>
+            <p className="mt-2 text-sm text-slate-500">
+              Subscription plans for {billingCycleTab} billing are not available right now. Try
+              switching the billing cycle or check back later.
+            </p>
+          </div>
+        ) : (
+          <div
+            className={`grid grid-cols-1 gap-6 ${
+              visiblePlans.length === 1
+                ? 'max-w-sm mx-auto'
+                : visiblePlans.length === 2
+                  ? 'sm:grid-cols-2 max-w-3xl mx-auto'
+                  : 'sm:grid-cols-2 lg:grid-cols-3'
+            }`}
+          >
+            {visiblePlans.map((plan) => (
+              <PlanCard
+                key={plan._id || plan.id}
+                plan={plan}
+                billingCycle={billingCycleTab}
+                onSelect={handlePlanSelect}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Bottom note */}
+        <p className="mx-auto mt-10 max-w-2xl text-center text-xs leading-relaxed text-slate-500 sm:text-sm">
+          All plans include secure payment via Razorpay. After purchase, complete your seller profile
+          to start posting properties. Need help choosing?{' '}
+          <Link to="/contact-us" className="font-semibold text-primary no-underline hover:underline">
+            Contact us
+          </Link>
+          .
+        </p>
+      </section>
+
+      {/* Confirm modal */}
       <Modal
         isOpen={!!selectedPlan}
         onClose={() => setSelectedPlan(null)}
-        title="Confirm Subscription"
+        title="Confirm your plan"
+        size="md"
       >
         {selectedPlan && (
-          <div className="flex flex-col gap-4">
-            <p className="text-slate-600 text-[0.95rem]">
-              You are about to purchase the following subscription plan:
+          <div className="flex flex-col gap-5">
+            <p className="text-sm leading-relaxed text-slate-600">
+              Review your selection before proceeding to secure checkout.
             </p>
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 flex flex-col gap-3">
-              <div className="flex justify-between items-center font-bold text-slate-800">
-                <span>Listing Type:</span>
-                <span
-                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${getListingTypeMeta(selectedPlan).className}`}
-                >
-                  {getListingTypeMeta(selectedPlan).label}
-                </span>
-              </div>
-              <div className="flex justify-between items-center font-bold text-slate-800">
-                <span>Plan:</span>
-                <span className="text-[1.05rem]">{selectedPlan.name}</span>
-              </div>
-              <div className="flex justify-between items-center font-bold text-slate-800">
-                <span>Billing Cycle:</span>
-                <span className="capitalize">{billingCycleTab}</span>
-              </div>
-              <div className="flex justify-between items-center font-bold text-slate-800">
-                <span>Property Limit:</span>
-                <span className="text-emerald-600">
-                  {billingCycleTab === 'annual'
-                    ? selectedPlan.annualPropertyLimit || selectedPlan.propertyLimit
-                    : selectedPlan.monthlyPropertyLimit || selectedPlan.propertyLimit}{' '}
-                  Listings
-                </span>
-              </div>
-              <div className="flex justify-between items-center font-bold text-slate-800">
-                <span>Total Amount:</span>
-                <span className="text-amber-600 text-[1.2rem]">
-                  ₹{getDisplayPrice(selectedPlan)}
-                  <span className="text-[0.8rem] text-slate-500 ml-1">
-                    {selectedPlan.monthlyPrice !== 0 && selectedPlan.annualPrice !== 0
-                      ? `/${billingCycleTab === 'annual' ? 'yr' : 'mo'}`
-                      : ''}
+
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+              <div className="border-b border-slate-200 bg-white px-5 py-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                      Selected plan
+                    </p>
+                    <p className="mt-0.5 text-lg font-bold text-slate-900">{selectedPlan.name}</p>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${getListingTypeMeta(selectedPlan).className}`}
+                  >
+                    {getListingTypeMeta(selectedPlan).label}
                   </span>
-                </span>
+                </div>
+              </div>
+
+              <div className="space-y-3 px-5 py-4 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-slate-500">Billing</span>
+                  <span className="font-bold capitalize text-slate-800">{billingCycleTab}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-slate-500">Property limit</span>
+                  <span className="font-bold text-emerald-700">
+                    {getPropertyLimit(selectedPlan)} listings
+                  </span>
+                </div>
+                <div className="flex items-center justify-between border-t border-slate-200 pt-3">
+                  <span className="font-semibold text-slate-700">Total</span>
+                  <span className="text-2xl font-extrabold tabular-nums text-primary">
+                    ₹{getDisplayPrice(selectedPlan)}
+                    <span className="ml-1 text-sm font-semibold text-slate-400">
+                      /{billingCycleTab === 'annual' ? 'yr' : 'mo'}
+                    </span>
+                  </span>
+                </div>
               </div>
             </div>
 
-            <p className="text-slate-700 font-medium text-[1rem] text-center mt-3">
-              Are you sure you want to buy this subscription?
-            </p>
-
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3">
               <button
+                type="button"
                 onClick={() => setSelectedPlan(null)}
-                className="flex-1 py-3 rounded-[5px] border border-slate-300 text-slate-700 font-bold hover:bg-slate-50 transition-colors"
+                className="flex-1 rounded-xl border border-slate-200 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleBuy}
-                className="flex-1 py-3 rounded-[5px] bg-amber-500 text-white font-bold hover:bg-amber-600 transition-colors shadow-sm"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-md shadow-primary/20 transition-all hover:bg-[#034432] active:scale-[0.98]"
               >
-                Confirm & Buy
+                Pay now
+                <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           </div>

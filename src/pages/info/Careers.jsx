@@ -1,106 +1,70 @@
 import React from 'react';
 import InfoLayout from '../../components/InfoLayout/InfoLayout';
 import { usePageData } from '../../hooks/usePageData';
-import { Cpu, TrendingUp, Heart, Award } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { COMPANY_EMAILS } from '../../data/constants';
+import { Cpu, Users, MapPin } from 'lucide-react';
 import {
   InfoPageBody,
+  InfoLead,
   InfoSectionTitle,
   InfoText,
   InfoCardGrid,
   InfoCard,
-  InfoJobCard,
   InfoAlert,
   InfoMailLink,
 } from '../../components/InfoLayout/InfoPageUi';
 
-const benefits = [
+const focusAreas = [
   {
     icon: Cpu,
-    title: 'Innovation First',
-    desc: 'Work on industry-leading search algorithms and digital property tools.',
+    title: 'Product & engineering',
+    desc: 'Building search, listing tools, and a reliable experience for buyers and sellers.',
   },
   {
-    icon: TrendingUp,
-    title: 'Growth & Learning',
-    desc: 'Dedicated mentorship and training budgets for every employee.',
+    icon: Users,
+    title: 'Sales & customer success',
+    desc: 'Helping users find the right property and supporting sellers on the platform.',
   },
   {
-    icon: Heart,
-    title: 'Competitive Benefits',
-    desc: 'Comprehensive health insurance and performance-based bonuses.',
-  },
-  {
-    icon: Award,
-    title: 'Culture of Excellence',
-    desc: 'Join a team that values integrity and premium service delivery.',
+    icon: MapPin,
+    title: 'Operations — Hyderabad',
+    desc: 'On-ground coordination, listing quality, and local market knowledge.',
   },
 ];
-
-const positions = [
-  { title: 'Real Estate Consultant', location: 'Hyderabad', type: 'Full-time' },
-  {
-    title: 'Senior Software Engineer (Frontend)',
-    location: 'Remote / Bangalore',
-    type: 'Full-time',
-  },
-  { title: 'Customer Success Associate', location: 'Mumbai', type: 'Full-time' },
-  { title: 'Market Research Analyst', location: 'Delhi NCR', type: 'Contract' },
-];
-
-const toastStyle = { background: '#0f172a', color: '#ffffff', borderRadius: '12px' };
 
 export default function Careers() {
   const { pageData, loading } = usePageData('careers');
 
-  const handleApply = (title) => {
-    toast.success(
-      `Application interest noted for ${title}. Email careers@yukthiproperties.com to apply.`,
-      {
-        style: toastStyle,
-      }
-    );
-  };
-
   return (
     <InfoLayout
-      title={pageData?.title || 'Careers with us'}
-      subtitle="Join a team reshaping how India discovers and buys property."
+      title={pageData?.title || 'Careers'}
+      subtitle="Work with us on India's property discovery platform."
     >
       <InfoPageBody loading={loading} cmsHtml={pageData?.content}>
-        <InfoSectionTitle>Join the Elite Team</InfoSectionTitle>
+        <InfoLead>
+          We are a growing team based in Hyderabad. When roles open up, we look for people who care
+          about clear communication, honest listings, and building useful products.
+        </InfoLead>
+
         <InfoText>
-          Building the future of real estate requires the brightest minds across technology, sales,
-          and operations. At Yukthi Properties, we offer an environment of growth, innovation, and
-          excellence.
+          We do not maintain a public job board at the moment. If you would like to be considered
+          for future openings, send your resume and a short note about the kind of role you are
+          interested in.
         </InfoText>
 
-        <InfoSectionTitle label="Culture">Why Work With Us?</InfoSectionTitle>
-        <InfoCardGrid cols="sm:grid-cols-2">
-          {benefits.map((b) => (
-            <InfoCard key={b.title} icon={b.icon} title={b.title}>
-              <p className="text-sm text-slate-600 leading-relaxed">{b.desc}</p>
+        <InfoSectionTitle label="Teams">Where we hire</InfoSectionTitle>
+        <InfoCardGrid cols="sm:grid-cols-2 lg:grid-cols-3">
+          {focusAreas.map((area) => (
+            <InfoCard key={area.title} icon={area.icon} title={area.title}>
+              <p className="text-sm leading-relaxed text-slate-600">{area.desc}</p>
             </InfoCard>
           ))}
         </InfoCardGrid>
 
-        <InfoSectionTitle label="Hiring">Open Positions</InfoSectionTitle>
-        <div className="space-y-3">
-          {positions.map((job) => (
-            <InfoJobCard
-              key={job.title}
-              title={job.title}
-              location={job.location}
-              type={job.type}
-              onApply={() => handleApply(job.title)}
-            />
-          ))}
-        </div>
-
         <InfoAlert variant="warning">
-          Don&apos;t see a position that fits? Send your resume to{' '}
-          <InfoMailLink email="careers@yukthiproperties.com" /> and we&apos;ll reach out when
-          something matches.
+          Send your resume to <InfoMailLink email={COMPANY_EMAILS.careers} /> with the subject line
+          &quot;Careers — [Your Role Interest]&quot;. We will reach out when a suitable opening is
+          available.
         </InfoAlert>
       </InfoPageBody>
     </InfoLayout>

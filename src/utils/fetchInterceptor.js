@@ -56,14 +56,15 @@ window.fetch = async function (input, init) {
     const response = await originalFetch(input, newInit);
 
     if (response.status === 401) {
-      // Avoid intercepting if we are calling auth routes (sending or verifying OTP)
-      const isLoginRequest =
+      const hadToken = Boolean(localStorage.getItem('token'));
+      const isAuthRoute =
         urlString.includes('/auth/verify-otp') ||
         urlString.includes('/auth/send-otp') ||
         urlString.includes('/auth/login') ||
         urlString.includes('/auth/register');
 
-      if (!isLoginRequest) {
+      // Only force logout when a real JWT session expired — not for soft login (user saved, no token yet).
+      if (!isAuthRoute && hadToken) {
         let isAuthError = false;
 
         try {
@@ -76,8 +77,7 @@ window.fetch = async function (input, init) {
           ) {
             isAuthError = true;
           }
-        } catch (e) {
-          // If we can't parse JSON, treat any 401 on non-login requests as unauthorized access
+        } catch {
           isAuthError = true;
         }
 
@@ -86,7 +86,6 @@ window.fetch = async function (input, init) {
 
           alert('Not authorized to access this route. Please login again.');
 
-          // Clear all auth-related local storage details for website/vendor portal
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           localStorage.removeItem('firebaseToken');
@@ -97,7 +96,6 @@ window.fetch = async function (input, init) {
           localStorage.removeItem('subscribed');
           localStorage.removeItem('type');
 
-          // Redirect to home and trigger login modal overlay
           window.location.href = '/?showLogin=true';
         }
       }

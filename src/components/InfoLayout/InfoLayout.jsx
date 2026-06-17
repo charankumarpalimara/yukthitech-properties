@@ -11,6 +11,9 @@ import {
   AlertTriangle,
   Trash2,
   Compass,
+  ShieldCheck,
+  Flag,
+  MessageSquare,
 } from 'lucide-react';
 import { ArrowR } from '../../data/icons';
 
@@ -45,15 +48,24 @@ export default function InfoLayout({ title, subtitle, children }) {
       links: [
         { label: 'About Us', path: '/about-us', icon: Info },
         { label: 'Contact Us', path: '/contact-us', icon: Mail },
+        { label: 'Safety Guide', path: '/safety-guide', icon: ShieldCheck },
         { label: 'Grievances', path: '/grievances', icon: Scale },
       ],
     },
     {
-      title: 'Legal & Security',
+      title: 'Support',
+      links: [
+        { label: 'Report a Problem', path: '/report-problem', icon: Flag },
+        { label: 'Feedback', path: '/feedback', icon: MessageSquare },
+      ],
+    },
+    {
+      title: 'Legal',
       links: [
         { label: 'Privacy Policy', path: '/privacy-policy', icon: Shield },
         { label: 'Terms & Conditions', path: '/terms-conditions', icon: FileText },
         { label: 'Disclaimer', path: '/disclaimer', icon: AlertTriangle },
+        { label: 'Summons & Notices', path: '/summons-notices', icon: Scale },
         { label: 'Delete Account', path: '/delete-account', icon: Trash2 },
       ],
     },

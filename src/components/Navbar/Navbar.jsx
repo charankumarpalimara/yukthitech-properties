@@ -483,7 +483,8 @@ export default function Navbar() {
   }, [isScrolled]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    const token = localStorage.getItem('token');
+    if (isAuthenticated && token) {
       fetchNotifications();
       const interval = setInterval(() => fetchNotifications(), 60000);
       return () => clearInterval(interval);
@@ -607,7 +608,7 @@ export default function Navbar() {
     <>
       <nav
         className={`fixed w-full left-0 top-0 z-[1000] lg:px-10 flex items-center h-[72px] max-sm:h-[56px] transition-all duration-500 ease-[cubic-bezier(0.165,0.84,0.44,1)] ${isScrolled
-          ? 'bg-white lg:rounded-b-[60px] shadow-[0_8px_30px_rgba(0,0,0,0.06)] sm:rounded-none'
+          ? 'bg-white  shadow-[0_8px_30px_rgba(0,0,0,0.06)] sm:rounded-none'
           : isHomePage
             ? 'bg-transparent'
             : 'bg-white/95 backdrop-blur-md'
@@ -964,7 +965,7 @@ export default function Navbar() {
               className="flex items-center gap-2 px-[14px] py-[7px] bg-primary text-white font-semibold text-[0.82rem] rounded-sm transition-all duration-200 hover:bg-primary-dark hover:-translate-y-px whitespace-nowrap no-underline"
               onClick={() => setIsMenuOpen(false)}
             >
-              Post Your Property
+              Post Property
               <PostPropertyPlanTag isSeller={isSeller} />
             </Link>
 
@@ -1173,7 +1174,7 @@ export default function Navbar() {
             ) : (
               <button
                 onClick={() => openLoginModal()}
-                className={`flex items-center gap-[7px] py-[7px] px-[18px] border-[1.5px] rounded-lg text-[0.85rem] font-semibold bg-transparent backdrop-blur-[4px] transition-all duration-300 whitespace-nowrap group focus:outline-none no-underline leading-normal cursor-pointer ${!isScrolled && isHomePage ? 'border-black text-black hover:bg-white/10 hover:border-white' : 'border-[#111827] text-[#111827] hover:bg-[#111827] hover:text-white hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]'}`}
+                className={`flex items-center gap-[7px] py-[7px] px-[18px] border-[1.5px] rounded-sm text-[0.85rem] font-semibold bg-transparent backdrop-blur-[4px] transition-all duration-300 whitespace-nowrap group focus:outline-none no-underline leading-normal cursor-pointer ${!isScrolled && isHomePage ? 'border-black text-black hover:bg-white/10 hover:border-white' : 'border-[#111827] text-[#111827] hover:bg-[#111827] hover:text-white hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]'}`}
               >
                 <span className="flex items-center leading-none">
                   <svg
@@ -1278,13 +1279,13 @@ export default function Navbar() {
             </div>
           ) : (
             <button
-              className="flex items-center justify-center gap-2 p-2.5 px-4 border-[1.5px] border-slate-200 rounded-lg text-[0.88rem] font-medium text-slate-600 bg-white font-sans transition-colors hover:border-primary hover:text-primary-dark w-full cursor-pointer"
+              className="flex items-center justify-center gap-2 p-2.5 px-4 border-[1.5px] border-primary rounded-sm text-[0.88rem] font-medium text-slate-600 bg-white font-sans transition-colors hover:border-primary hover:text-primary-dark w-full cursor-pointer"
               onClick={() => {
                 setIsMenuOpen(false);
                 openLoginModal();
               }}
             >
-              Login
+              Login / Register
             </button>
           )}
 

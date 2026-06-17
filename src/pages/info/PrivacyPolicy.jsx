@@ -1,11 +1,11 @@
 import React from 'react';
 import InfoLayout from '../../components/InfoLayout/InfoLayout';
 import { usePageData } from '../../hooks/usePageData';
-import { Eye, Database, ShieldCheck, HelpCircle, Calendar } from 'lucide-react';
+import { COMPANY_EMAILS } from '../../data/constants';
+import { Eye, Database, ShieldCheck, UserCheck, Calendar } from 'lucide-react';
 import {
   InfoPageBody,
-  InfoSectionTitle,
-  InfoText,
+  InfoLead,
   InfoMetaBadge,
   InfoListCard,
   InfoAlert,
@@ -15,45 +15,42 @@ import {
 const policySections = [
   {
     icon: Database,
-    title: 'Information We Collect',
-    content:
-      'We only collect essential details necessary to provide you with premium real estate search services:',
+    title: 'Information we collect',
+    content: 'We collect only what is needed to run the platform and serve your requests:',
     items: [
-      'Personal Details: Name, email address, and phone number when you register, contact agents, or request information.',
-      'Usage Data: Property search preferences, saved listings, page views, and location information (if permitted).',
-      'Cookies: Subtle device files that let us remember your session, preferences, and optimize loading performance.',
+      'Account details: name, email, and phone when you register or submit a form.',
+      'Usage data: searches, saved listings, and pages viewed to improve recommendations.',
+      'Device data: cookies and session identifiers for login, preferences, and security.',
     ],
   },
   {
     icon: Eye,
-    title: 'How We Use Your Data',
-    content:
-      'Your information is utilized solely to enhance and personalize your property transaction experience:',
+    title: 'How we use your data',
+    content: 'Your information is used to operate and improve Yukthi Properties:',
     items: [
-      'To connect you with authentic developers, property owners, and verified real estate agents upon your request.',
-      'To send real-time alerts about new listings matching your criteria, price adjustments, and account security updates.',
-      'To run analytics and improve the visual layout, filtering speed, and overall usability of our platform.',
+      'To authenticate your account and process enquiries you submit.',
+      'To send alerts about saved searches, listing updates, or security notices you opt into.',
+      'To analyse usage patterns and fix performance or usability issues.',
     ],
   },
   {
     icon: ShieldCheck,
-    title: 'Data Protection & Security',
-    content:
-      'We employ top-tier industrial measures to ensure your personal data remains completely safe with us:',
+    title: 'How we protect your data',
+    content: 'We apply reasonable technical and organisational safeguards:',
     items: [
-      'End-to-end encryption for communication channels and user accounts.',
-      'Strict restriction of data access: Only authorized personnel have access to sensitive transaction files.',
-      'We enforce a zero-tolerance policy against sharing or selling your personal information with third-party advertising companies.',
+      'Encrypted connections for data in transit where supported.',
+      'Access limited to staff who need it for support or operations.',
+      'We do not sell your personal information to third-party advertisers.',
     ],
   },
   {
-    icon: ShieldCheck,
-    title: 'Your Choices & Rights',
-    content: 'You maintain complete control over the information you choose to share with us:',
+    icon: UserCheck,
+    title: 'Your rights',
+    content: 'You can manage how your data is used:',
     items: [
-      'You can opt-out of promotional emails and newsletters at any time through your profile settings.',
-      'You have the right to request access to, edit, or permanently delete your account data from our servers.',
-      'You may disable cookies in your web browser settings, although some features of the site might have limited functionality.',
+      'Update profile details from your account settings.',
+      'Opt out of promotional emails using the unsubscribe link or settings.',
+      'Request account deletion via the Delete Account page or by emailing our privacy team.',
     ],
   },
 ];
@@ -62,12 +59,12 @@ function PolicyItem({ text }) {
   const parts = text.split(': ');
   if (parts.length > 1) {
     return (
-      <li className="text-sm text-slate-600 leading-relaxed">
+      <li className="text-sm leading-relaxed text-slate-600">
         <strong className="text-slate-800">{parts[0]}:</strong> {parts.slice(1).join(': ')}
       </li>
     );
   }
-  return <li className="text-sm text-slate-600 leading-relaxed">{text}</li>;
+  return <li className="text-sm leading-relaxed text-slate-600">{text}</li>;
 }
 
 export default function PrivacyPolicy() {
@@ -79,19 +76,17 @@ export default function PrivacyPolicy() {
       subtitle="How we collect, use, and protect your personal information."
     >
       <InfoPageBody loading={loading} cmsHtml={pageData?.content}>
-        <InfoMetaBadge icon={Calendar}>Last updated: April 21, 2026</InfoMetaBadge>
+        <InfoMetaBadge icon={Calendar}>Last updated: April 2026</InfoMetaBadge>
 
-        <InfoSectionTitle>Your Privacy Matters</InfoSectionTitle>
-        <InfoText>
-          At Yukthi Properties, we are committed to protecting your personal data. This policy
-          explains how we collect, use, and safeguard your information when you interact with our
-          luxury real estate portal.
-        </InfoText>
+        <InfoLead>
+          This policy explains what data Yukthi Properties collects when you use our website, how we
+          use it, and the choices available to you.
+        </InfoLead>
 
         <div className="space-y-4">
           {policySections.map((sec) => (
             <InfoListCard key={sec.title} icon={sec.icon} title={sec.title}>
-              <p className="mb-3 text-sm text-slate-600 leading-relaxed">{sec.content}</p>
+              <p className="mb-3 text-sm leading-relaxed text-slate-600">{sec.content}</p>
               <ul className="list-disc space-y-2 pl-5">
                 {sec.items.map((item) => (
                   <PolicyItem key={item} text={item} />
@@ -101,9 +96,9 @@ export default function PrivacyPolicy() {
           ))}
         </div>
 
-        <InfoAlert variant="slate" icon={HelpCircle}>
-          Have questions or concerns about your privacy settings? Contact our Privacy Team at{' '}
-          <InfoMailLink email="privacy@yukthiproperties.com" />.
+        <InfoAlert variant="slate">
+          Questions about privacy? Email{' '}
+          <InfoMailLink email={COMPANY_EMAILS.privacy} />.
         </InfoAlert>
       </InfoPageBody>
     </InfoLayout>

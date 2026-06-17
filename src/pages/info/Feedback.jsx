@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import InfoLayout from '../../components/InfoLayout/InfoLayout';
 import { usePageData } from '../../hooks/usePageData';
-import { Star, MessageSquare, Heart, Sparkles, User, Mail } from 'lucide-react';
+import { Star, MessageSquare, User, Mail } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import {
   InfoPageBody,
-  InfoSectionTitle,
-  InfoText,
+  InfoLead,
   InfoForm,
   InfoFormRow,
   InfoField,
   InfoInput,
   InfoTextarea,
   InfoSubmit,
+  InfoAlert,
+  InfoLink,
 } from '../../components/InfoLayout/InfoPageUi';
 
 const satisfactionLabels = {
-  1: 'Very Unsatisfied',
+  1: 'Very unsatisfied',
   2: 'Unsatisfied',
   3: 'Neutral',
   4: 'Satisfied',
-  5: 'Very Satisfied',
+  5: 'Very satisfied',
 };
 
 const toastStyle = { background: '#0f172a', color: '#ffffff', borderRadius: '12px' };
@@ -33,10 +34,10 @@ export default function Feedback() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (rating === 0) {
-      toast.error('Please select an overall satisfaction rating.', { style: toastStyle });
+      toast.error('Please select a satisfaction rating.', { style: toastStyle });
       return;
     }
-    toast.success('Thank you for your valuable feedback!', { style: toastStyle });
+    toast.success('Thank you for your feedback!', { style: toastStyle });
     setRating(0);
     e.target.reset();
   };
@@ -46,19 +47,18 @@ export default function Feedback() {
   return (
     <InfoLayout
       title={pageData?.title || 'Feedback'}
-      subtitle="Share your experience and help us improve Yukthi Properties."
+      subtitle="Tell us what is working and what we should improve."
     >
       <InfoPageBody loading={loading} cmsHtml={pageData?.content}>
-        <InfoSectionTitle>Help Us Improve</InfoSectionTitle>
-        <InfoText>
-          Your feedback is crucial to making Yukthi Properties the best real estate platform in
-          India. Whether it&apos;s a suggestion, a compliment, or a critique, we want to hear it.
-        </InfoText>
+        <InfoLead>
+          Your feedback helps us improve search, listings, and support. It takes about a minute to
+          complete.
+        </InfoLead>
 
         <InfoForm onSubmit={handleSubmit}>
           <div>
             <label className="mb-3 block text-sm font-semibold text-slate-700">
-              Overall Satisfaction
+              Overall satisfaction
             </label>
             <div className="flex flex-wrap items-center gap-2">
               {[1, 2, 3, 4, 5].map((num) => (
@@ -87,38 +87,31 @@ export default function Feedback() {
           </div>
 
           <InfoFormRow>
-            <InfoField label="Your Name (Optional)" icon={User}>
-              <InfoInput icon type="text" name="name" placeholder="Enter your name" />
+            <InfoField label="Name (optional)" icon={User}>
+              <InfoInput icon type="text" name="name" placeholder="Your name" />
             </InfoField>
-            <InfoField label="Your Email (Optional)" icon={Mail}>
-              <InfoInput icon type="email" name="email" placeholder="example@gmail.com" />
+            <InfoField label="Email (optional)" icon={Mail}>
+              <InfoInput icon type="email" name="email" placeholder="you@example.com" />
             </InfoField>
           </InfoFormRow>
 
-          <InfoField label="What do you like most about our platform?" icon={Sparkles}>
-            <InfoInput
-              icon
-              type="text"
-              name="likes"
-              placeholder="e.g. Verified listings, ease of navigation, customer support"
-            />
-          </InfoField>
-
-          <InfoField label="Your Feedback" icon={MessageSquare} multiline>
+          <InfoField label="Your feedback" icon={MessageSquare} multiline>
             <InfoTextarea
               icon
               name="feedback"
-              rows={6}
-              placeholder="Tell us more about your experience..."
+              rows={5}
+              placeholder="What did you like or what should we fix?"
               required
             />
           </InfoField>
 
-          <InfoSubmit>
-            <Heart className="h-4 w-4 fill-current" />
-            Submit Feedback
-          </InfoSubmit>
+          <InfoSubmit>Submit feedback</InfoSubmit>
         </InfoForm>
+
+        <InfoAlert variant="slate">
+          For formal complaints that need escalation, use our{' '}
+          <InfoLink to="/grievances">Grievances</InfoLink> page instead.
+        </InfoAlert>
       </InfoPageBody>
     </InfoLayout>
   );

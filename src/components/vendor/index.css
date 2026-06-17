@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
 @import 'tailwindcss';
 /* Ensure property-form JSX is scanned when this stylesheet is compiled */
@@ -56,7 +56,7 @@
   --radius-2xl: 1rem;
 
   /* Typography */
-  --font-sans: 'Montserrat', Arial, sans-serif;
+  --font-sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --text-2xs: 0.65rem;
 
   /* Shadows */
@@ -95,7 +95,7 @@
   }
 
   body {
-    font-family: 'Montserrat', Arial, sans-serif;
+    font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
     letter-spacing: -0.01em;
     background-color: #f8fafc;
     color: #0f172a;
@@ -104,7 +104,7 @@
 
   /* ─── CRITICAL: Override website globals when inside vendor panel ────── */
   body.vendor-panel {
-    font-family: 'Montserrat', Arial, sans-serif !important;
+    font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif !important;
     font-size: 14px;
     /* Reset radii that website overrides to 16px/24px */
     --radius-sm: 0.125rem;

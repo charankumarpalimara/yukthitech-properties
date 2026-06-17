@@ -8,6 +8,7 @@ export const useNotificationsStore = create((set, get) => ({
   error: null,
 
   fetchNotifications: async () => {
+    if (!localStorage.getItem('token')) return [];
     set({ loading: true, error: null });
     try {
       const res = await apiClient(`${API_URL}/notifications`);

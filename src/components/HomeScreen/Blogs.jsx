@@ -3,15 +3,15 @@
  * Full listing pages: pages/Blogs.jsx (/blogs), pages/AllBlogs.jsx (/all-blogs)
  * Detail screen: BlogPost.jsx (/blog/:slug)
  */
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   HOME_BLOG_POSTS,
-  mapApiBlogToHomeShape,
   sortBlogPostsByPriority,
 } from '../../data/homeBlogs';
 import { ArrowR } from '../../data/icons';
-import { API_URL, apiClient } from '../../service/api';
+import { SectionLoader } from '../Loader/Loader';
+import './Blogs.css';
 
 export const BlogImage = memo(function BlogImage({
   src,
@@ -62,65 +62,17 @@ export const BlogImage = memo(function BlogImage({
   );
 });
 
-import './Blogs.css';
-
 export function HomeBlogsSkeleton() {
-  return (
-    <div className="home-blog-premium animate-pulse" aria-hidden>
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
-        <div className="space-y-2">
-          <div className="h-3 w-32 rounded bg-slate-800" />
-          <div className="h-8 w-56 rounded bg-slate-800" />
-          <div className="h-4 w-96 max-w-full rounded bg-slate-800" />
-        </div>
-        <div className="h-11 w-36 rounded-full bg-slate-800 shrink-0" />
-      </div>
-      <div className="blog-accordion-container">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="blog-skeleton-card" />
-        ))}
-      </div>
-    </div>
-  );
+  return <SectionLoader text="Loading articles..." minHeight="320px" />;
 }
 
 /**
  * Home page blog preview with dynamic interactive accordion storystrip design.
  */
-export function HomeBlogs({ posts: postsFromHome = [], homeLoading = false }) {
-  const [posts, setPosts] = useState(postsFromHome?.length ? postsFromHome : HOME_BLOG_POSTS);
-
-  useEffect(() => {
-    if (postsFromHome?.length) {
-      setPosts(postsFromHome);
-    }
-  }, [postsFromHome]);
-
-  useEffect(() => {
-    if (homeLoading || postsFromHome?.length) return;
-
-    let cancelled = false;
-
-    const load = async () => {
-      try {
-        const res = await apiClient(`${API_URL}/blogs?limit=8`);
-        const json = await res.json();
-        if (cancelled) return;
-        if (!res.ok || !json.success || !Array.isArray(json.data)) return;
-        const mapped = json.data.map(mapApiBlogToHomeShape).filter(Boolean);
-        if (mapped.length > 0) setPosts(mapped);
-      } catch (e) {
-        if (!cancelled) console.warn('HomeBlogs: API unavailable, using static posts', e);
-      }
-    };
-
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [homeLoading, postsFromHome]);
-
-  const items = sortBlogPostsByPriority(posts).slice(0, 3);
+export function HomeBlogs({ posts: postsFromHome = [] }) {
+  const items = sortBlogPostsByPriority(
+    postsFromHome?.length ? postsFromHome : HOME_BLOG_POSTS
+  ).slice(0, 3);
   if (!items.length) return null;
 
   return (

@@ -47,7 +47,8 @@ export default {
         border: '#E2E8F0',
       },
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        sans: ['DM Sans', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        outfit: ['DM Sans', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
       },
       boxShadow: {
         card: '0 2px 8px -1px rgba(0,0,0,0.08), 0 1px 4px -1px rgba(0,0,0,0.04)',
