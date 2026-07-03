@@ -7,7 +7,6 @@ const prefetchers = {
   '/vendor/properties/verified': () => import('../../UserPanel/pages/properties/PropertyVerified'),
   '/vendor/properties/rejected': () => import('../../UserPanel/pages/properties/PropertyRejected'),
   '/vendor/properties/draft': () => import('../../UserPanel/pages/properties/PropertyDraft'),
-  '/vendor/banner-subscriptions': () => import('../../UserPanel/pages/BannerSubscriptions'),
   '/vendor/support': () => import('../../UserPanel/pages/Support'),
   '/vendor/create-property': () => import('../../UserPanel/pages/CreateProperty'),
 };

@@ -1,10 +1,5 @@
 import { create } from 'zustand';
-import { API_URL, VENDORAPI_URL } from '../service/api';
-import {
-  propertiesData as propertyAnalytics,
-  recentActivity,
-  topCities,
-} from '../components/vendor/data/mockData';
+import { VENDORAPI_URL } from '../service/api';
 
 const DASHBOARD_URL = `${VENDORAPI_URL}/dashboard`;
 
@@ -15,9 +10,6 @@ const getAuthHeader = () => ({
 
 export const useDashboardStore = create((set) => ({
   kpis: [],
-  propertyAnalytics,
-  recentActivity,
-  topCities,
   loading: false,
   error: null,
 

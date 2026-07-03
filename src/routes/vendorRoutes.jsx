@@ -10,8 +10,6 @@ const VendorProperties = lazy(() => import('../components/UserPanel/pages/Proper
 const VendorPropertyDetails = lazy(() => import('../components/UserPanel/pages/PropertyDetails'));
 const Support = lazy(() => import('../components/UserPanel/pages/Support'));
 const TicketDetails = lazy(() => import('../components/UserPanel/pages/TicketDetails'));
-const VendorBanners = lazy(() => import('../components/UserPanel/pages/Banners'));
-const VendorBannerSubscriptions = lazy(() => import('../components/UserPanel/pages/BannerSubscriptions'));
 const Transactions = lazy(() => import('../components/UserPanel/pages/Transactions'));
 const CreateProperty = lazy(() => import('../components/UserPanel/pages/CreateProperty'));
 const PropertyPending = lazy(() => import('../components/UserPanel/pages/properties/PropertyPending'));
@@ -35,8 +33,6 @@ export const vendorRoutes = (
     <Route path="chats" element={<MessagesPanel />} />
     <Route path="support" element={<Support />} />
     <Route path="support/:id" element={<TicketDetails />} />
-    <Route path="banner-subscriptions" element={<VendorBannerSubscriptions />} />
-    <Route path="banners" element={<VendorBanners />} />
     <Route path="profile" element={<ProfilePanel />} />
     <Route path="profile/*" element={<ProfilePanel />} />
   </Route>

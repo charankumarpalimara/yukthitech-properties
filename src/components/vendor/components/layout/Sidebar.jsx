@@ -5,24 +5,10 @@ import { prefetchVendorRoute } from '../../utils/routePrefetch';
 import {
   LayoutDashboard,
   CreditCard,
-  Users,
-  Star,
   Building2,
-  BarChart3,
   MessageCircle,
-  MessageSquare,
-  MessageSquareText,
-  UserCircle,
   ChevronLeft,
   ChevronRight,
-  Home,
-  ShieldCheck,
-  UserCog,
-  Users2,
-  Headset,
-  Store,
-  ShoppingCart,
-  Image as ImageIcon,
   Clock,
   CheckCircle,
   XCircle,
@@ -47,18 +33,6 @@ const navItems = [
       { path: '/vendor/properties/draft', label: 'Draft', icon: FileEdit },
     ],
   },
-  // { path: '/banners', label: 'Banners', icon: ImageIcon },
-  { path: '/vendor/banner-subscriptions', label: 'Banner Ads', icon: ShoppingCart },
-
-  // {
-  //   label: 'Staff',
-  //   icon: Users2,
-  //   children: [
-  //     { path: '/staff/roles', label: 'Roles', icon: ShieldCheck },
-  //     { path: '/staff/members', label: 'Members', icon: UserCog },
-  //   ]
-  // },
-  // ✅ New Sections
   { path: '/vendor/support', label: 'Support', icon: MessageCircle },
 ];
 

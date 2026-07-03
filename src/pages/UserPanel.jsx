@@ -24,7 +24,6 @@ const VendorPropertyDetails = lazy(() => import('../components/UserPanel/pages/P
 const CreateProperty = lazy(() => import('../components/UserPanel/pages/CreateProperty'));
 const Support = lazy(() => import('../components/UserPanel/pages/Support'));
 const TicketDetails = lazy(() => import('../components/UserPanel/pages/TicketDetails'));
-const VendorBannerSubscriptions = lazy(() => import('../components/UserPanel/pages/BannerSubscriptions'));
 const PropertyPending = lazy(() => import('../components/UserPanel/pages/properties/PropertyPending'));
 const PropertyVerified = lazy(() => import('../components/UserPanel/pages/properties/PropertyVerified'));
 const PropertyRejected = lazy(() => import('../components/UserPanel/pages/properties/PropertyRejected'));
@@ -257,8 +256,6 @@ export default function UserPanel() {
             case 'support':
               if (id) return <TicketDetails />;
               return <Support />;
-            case 'banner-subscriptions':
-              return <VendorBannerSubscriptions />;
             default:
               return <ProfilePanel />;
           }
