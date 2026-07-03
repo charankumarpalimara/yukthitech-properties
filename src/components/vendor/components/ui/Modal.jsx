@@ -31,11 +31,11 @@ export default function Modal({
 
   const sizeClass =
     {
-      sm: 'max-w-sm',
-      md: 'max-w-lg',
-      lg: 'max-w-2xl',
-      xl: 'max-w-4xl',
-    }[size] || 'max-w-lg';
+      sm: 'sm:max-w-sm',
+      md: 'sm:max-w-lg',
+      lg: 'sm:max-w-2xl',
+      xl: 'sm:max-w-4xl',
+    }[size] || 'sm:max-w-lg';
   return createPortal(
     <div
       ref={overlayRef}
@@ -45,7 +45,7 @@ export default function Modal({
       }}
     >
       <div
-        className={`bg-white rounded-t-[28px] sm:rounded-lg shadow-xl w-full max-w-full sm:${sizeClass} animate-in fade-in slide-in-from-bottom sm:zoom-in duration-300`}
+        className={`bg-white rounded-t-[28px] sm:rounded-lg shadow-xl w-full max-w-full ${sizeClass} animate-in fade-in slide-in-from-bottom sm:zoom-in duration-300`}
       >
         {/* Mobile bottom sheet grab handle */}
         <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mt-3 mb-1 block sm:hidden" />
