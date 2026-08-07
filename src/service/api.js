@@ -1,10 +1,9 @@
-// export const API_URL =
-//   import.meta.env.VITE_API_URL || 'https://api.yukthiproperties.com/api/website';
-// export const VENDORAPI_URL =
-//   import.meta.env.VITE_VENDOR_API_URL || 'https://api.yukthiproperties.com/api/vendor';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://3.106.60.238:3000/api/website';
+export const VENDORAPI_URL =
+  import.meta.env.VITE_VENDOR_API_URL || 'http://3.106.60.238:3000/api/vendor';
 
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/website';
-export const VENDORAPI_URL = import.meta.env.VITE_VENDOR_API_URL || 'http://localhost:5001/api/vendor';
+// export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/website';
+// export const VENDORAPI_URL = import.meta.env.VITE_VENDOR_API_URL || 'http://localhost:5001/api/vendor';
 
 /**
  * Global API Client for all requests

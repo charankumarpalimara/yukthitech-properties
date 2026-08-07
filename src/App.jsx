@@ -52,9 +52,7 @@ export default function App() {
         />
         <Login />
         <Register />
-        <Routes>
-          {websiteRoutes}
-        </Routes>
+        <Routes>{websiteRoutes}</Routes>
       </SearchProvider>
     </Router>
   );

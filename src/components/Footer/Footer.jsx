@@ -12,13 +12,7 @@ import {
 import { formatCityName } from '../../utils/formatCityName';
 import { FOOTER_SOCIAL_ICON_MAP, LogoIcon } from '../../data/icons';
 import { API_URL } from '../../service/api';
-import {
-  ShieldCheck,
-  Building2,
-  Send,
-  FileCheck,
-  Crown,
-} from 'lucide-react';
+import { ShieldCheck, Building2, Send, FileCheck, Crown } from 'lucide-react';
 
 const NEWSLETTER_KEY = 'yukthi_newsletter_subscribed';
 const TOAST_STYLE = { background: '#0A0A0A', color: '#fff', borderRadius: '12px' };
@@ -247,7 +241,7 @@ export default function Footer() {
       .then((json) => {
         if (!cancelled && json.success && json.data) setConfig(json.data);
       })
-      .catch(() => { });
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -256,13 +250,13 @@ export default function Footer() {
   const cityLinks =
     cities.length > 0
       ? cities.map((c) => {
-        const name = c.name || c;
-        return { label: formatCityName(name), path: `/city/${encodeURIComponent(name)}` };
-      })
+          const name = c.name || c;
+          return { label: formatCityName(name), path: `/city/${encodeURIComponent(name)}` };
+        })
       : FOOTER_LINKS.Explore.filter((l) => l.label.startsWith('Buy')).map((item) => ({
-        label: formatCityName(item.label.replace('Buy in ', '')),
-        path: item.path,
-      }));
+          label: formatCityName(item.label.replace('Buy in ', '')),
+          path: item.path,
+        }));
 
   const appLinks = {
     playStore: config?.appLinks?.playStore || APP_STORE_LINKS.playStore,
@@ -291,7 +285,7 @@ export default function Footer() {
           <div className="shrink-0">
             <Link
               to="/subscription"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[#c5a880] px-4 py-2 text-[12.5px] font-bold text-slate-900 no-underline hover:bg-[#d4b892] transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 rounded-sm bg-[#c5a880] px-4 py-2 text-[12.5px] font-bold text-slate-900 no-underline hover:bg-[#d4b892] transition-colors whitespace-nowrap"
             >
               <Building2 size={13} strokeWidth={2.5} />
               Post Your Property Free
@@ -299,7 +293,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-
 
       {/* 2. Main content wrapper */}
       <div className="relative w-full overflow-hidden">
@@ -334,7 +327,8 @@ export default function Footer() {
               </div>
             </Link>
             <p className="max-w-xs text-[13.5px] font-normal leading-relaxed text-slate-500">
-              Verified luxury homes, premium plots & commercial spaces with trusted builders and agents across India.
+              Verified luxury homes, premium plots & commercial spaces with trusted builders and
+              agents across India.
             </p>
             <div className="flex flex-row flex-wrap gap-4 pt-1">
               <div className="flex items-center gap-2 text-xs font-semibold text-[#023526] bg-[#023526]/5 px-3 py-1.5 rounded-lg border border-[#023526]/10">
@@ -398,19 +392,24 @@ export default function Footer() {
           <div className="bg-[#f8fafc] border border-slate-200/50 rounded-2xl p-6 lg:p-8 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-sm">
             {/* Newsletter Box */}
             <div className="w-full lg:max-w-sm space-y-2">
-              <span className="text-[9.5px] font-bold uppercase tracking-[0.2em] text-[#c5a880]">Newsletter Subscription</span>
+              <span className="text-[9.5px] font-bold uppercase tracking-[0.2em] text-[#c5a880]">
+                Newsletter Subscription
+              </span>
               <h4 className="text-md font-bold text-slate-900 tracking-tight leading-none">
                 Stay updated with trends
               </h4>
               <p className="text-[12.5px] text-slate-500 font-light leading-relaxed">
-                Get notified of new premium listings, weekly market updates, and exclusive property insights.
+                Get notified of new premium listings, weekly market updates, and exclusive property
+                insights.
               </p>
               <NewsletterForm enabled={config?.newsletterEnabled !== false} />
             </div>
 
             {/* Social Pillars */}
             <div className="flex flex-col items-center space-y-2.5">
-              <span className="text-[9.5px] font-bold uppercase tracking-[0.2em] text-[#c5a880] text-center">Social Media Channels</span>
+              <span className="text-[9.5px] font-bold uppercase tracking-[0.2em] text-[#c5a880] text-center">
+                Social Media Channels
+              </span>
               <h4 className="text-md font-bold text-slate-900 tracking-tight leading-none text-center">
                 Connect With Us
               </h4>
@@ -423,7 +422,9 @@ export default function Footer() {
 
             {/* Mobile App Download */}
             <div className="flex flex-col items-center lg:items-end space-y-2.5 w-full lg:w-auto">
-              <span className="text-[9.5px] font-bold uppercase tracking-[0.2em] text-[#c5a880] text-center lg:text-right w-full">Mobile Application</span>
+              <span className="text-[9.5px] font-bold uppercase tracking-[0.2em] text-[#c5a880] text-center lg:text-right w-full">
+                Mobile Application
+              </span>
               <h4 className="text-md font-bold text-slate-900 tracking-tight leading-none text-center lg:text-right w-full">
                 Yukthi Properties App
               </h4>
@@ -444,7 +445,8 @@ export default function Footer() {
               © {new Date().getFullYear()}{' '}
               <strong className="font-semibold text-slate-900">Yukthi Properties</strong>
               <span className="text-slate-300 mx-2">|</span>
-              All rights reserved by <span className="font-medium text-slate-800">Yukthitech Solutions</span>
+              All rights reserved by{' '}
+              <span className="font-medium text-slate-800">Yukthitech Solutions</span>
             </p>
             <nav
               className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 sm:justify-end"

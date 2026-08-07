@@ -36,7 +36,7 @@
   background: var(--color-primary, #023526);
   color: #ffffff;
   border: 1px solid var(--color-primary-dark, #011f16);
-  border-radius: 50%;
+  border-radius: 10%;
   cursor: pointer;
   font-family: inherit;
   font-size: 0.875rem;
